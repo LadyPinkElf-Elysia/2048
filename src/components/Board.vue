@@ -29,9 +29,12 @@ const boardStyle = computed(() => ({
     display: grid;
     grid-template-rows: repeat(var(--rows), 1fr);
     grid-template-columns: repeat(var(--cols), 1fr);
-    gap: 2cqw;
-    padding: 2cqw;
-    border-radius: 3cqw;
+    
+    /* 🌟 间距与内边距：基于总宽度除以列数（也就是单个格子的宽度）的 10% */
+    gap: calc(100cqw / var(--cols) * 0.1);
+    padding: calc(100cqw / var(--cols) * 0.1);
+    
+    border-radius: 8px;
     aspect-ratio: 1;
     width: 100%;
     background: #bbada0;
@@ -42,15 +45,16 @@ const boardStyle = computed(() => ({
     display: flex;
     justify-content: center;
     align-items: center;
-    /* 基础字体大小，最大32px */
-    font-size: clamp(12px, 7cqw, 32px);
-    font-weight: 900; /* 加粗一点更有数字感 */
+    
+    /* 🌟 字体魔法：基础大小为单格的 60%，最小 8px，最大 40px */
+    font-size: clamp(8px, calc(100cqw / var(--cols) * 0.6), 40px);
+    font-weight: 900;
     line-height: 1;
-    border-radius: 2cqw;
+    background-color: #cdc1b4; 
+    border-radius: calc(100cqw / var(--cols) * 0.1);
     color: #776e65;
     overflow: hidden;
     transition: all 0.1s;
-    background-color: #cdc1b4; 
 }
 
 /* === 基础色块 (2 ~ 2048) === */

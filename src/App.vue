@@ -37,7 +37,7 @@ html, body {
 
 .page-card {
     width: 100%;
-    max-width: 480px; /* 电脑上最宽 480px，手机上 100% */
+    max-width: 560px; /* 电脑上最宽 480px，手机上 100% */
     background-color: #faf8ef;
     border-radius: 24px;
     padding: 24px 16px; /* 🌟 手机上减小内边距 */

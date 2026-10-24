@@ -13,8 +13,8 @@ const handleStart = () => {
     emit('start')
 }
 
-const ROW_OPTIONS = [3, 4, 5, 6, 7, 8]
-const COL_OPTIONS = [3, 4, 5, 6, 7, 8]
+const ROW_OPTIONS = [3, 4, 5, 6, 7, 8, 9]
+const COL_OPTIONS = [3, 4, 5, 6, 7, 8, 9]
 const N_OPTIONS = [2, 3, 4]
 </script>
 
@@ -52,10 +52,12 @@ const N_OPTIONS = [2, 3, 4]
 .custom-select {
     width: 100%;
 }
+
 :deep(.el-select__wrapper) {
     border-radius: 8px;
     background-color: #fcfbf9;
-    box-shadow: 0 0 0 1px #cdc1b4 inset; /* 替换默认边框 */
+    box-shadow: 0 0 0 1px #cdc1b4 inset;
+    /* 替换默认边框 */
 }
 
 :deep(.el-select__wrapper.is-focused) {

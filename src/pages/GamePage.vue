@@ -75,5 +75,7 @@ const statItems=computed<StatItem[]>(()=>[
 .board-wrapper {
     width: 100%;
     margin: 8px 0;
+    display: flex; /* 🌟 确保内部棋盘能 100% 撑开 */
+    justify-content: center;
 }
 </style>
