@@ -25,6 +25,7 @@ export interface ActionItem {
     type?: 'primary' | 'success' | 'warning' | 'info' | 'danger' | 'default'
     icon?: any
     disabled?:boolean
+    shortcut?: string
 }
 
 export interface StatItem{

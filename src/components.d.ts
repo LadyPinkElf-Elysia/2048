@@ -12,6 +12,7 @@ declare module 'vue' {
     DirectionPad: typeof import('./components/DirectionPad.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElIcon: typeof import('element-plus/es')['ElIcon']
+    ElTooltip: typeof import('element-plus/es')['ElTooltip']
     GameSetup: typeof import('./components/GameSetup.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

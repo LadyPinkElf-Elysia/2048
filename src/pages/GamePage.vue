@@ -49,7 +49,15 @@ watch(() => store.hasWon, (won) => {
                 center: true,
                 showClose: false, // 🌟 加上这句，防止点 X 或按 Esc 导致意外退出
             }
-        )
+        ).then(() => {
+            // 🌟 选择继续：解除胜利锁定，恢复计时
+            store.keepPlaying()
+            timer.start()
+        }).catch(() => {
+            // 🌟 选择结束：重置游戏并返回设置页
+            store.init()
+            router.push({ name: PAGES.Config })
+        })
     }
 })
 
@@ -83,11 +91,15 @@ const handleReset = () => {
     timer.reset()
 }
 
+const isMac = /Mac|iPod|iPhone|iPad/.test(navigator.userAgent)
+// 如果是 Mac 显示 Cmd，否则显示 Ctrl
+const cmdKey = isMac ? 'Cmd' : 'Ctrl'
+
 const actions = computed<ActionItem[]>(() => [
     { key: 'back', label: '返回', onClick: () => router.push({ name: PAGES.Config }) },
     { key: 'reset', label: '重开', onClick: handleReset },
-    { key: 'undo', label: '撤回', disabled: !store.canUndo || store.hasWon, onClick: store.undo },
-    { key: 'redo', label: '重做', disabled: !store.canRedo || store.hasWon, onClick: store.redo }
+    { key: 'undo', label: '撤回', disabled: !store.canUndo || store.hasWon, onClick: store.undo, shortcut: `${cmdKey}+Z` },
+    { key: 'redo', label: '重做', disabled: !store.canRedo || store.hasWon, onClick: store.redo, shortcut: `${cmdKey}+Y` }
 ])
 
 const statItems = computed<StatItem[]>(() => [
