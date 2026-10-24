@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 import { PAGES } from '../constents/2048.ts';
 import router from '../router/index.ts';
 import { use2048 } from '../stores/use2048.ts';
