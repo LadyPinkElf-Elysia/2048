@@ -4,6 +4,12 @@ import { Back, Bottom, Right, Top } from '@element-plus/icons-vue';
 import { useKey } from '../composables/useKey';
 import type { Direction } from '../types/2048';
 
+const props = defineProps<{
+    undo: () => void
+    redo: () => void
+    reset: () => void
+}>()
+
 const emit = defineEmits<{
     move: [direction: Direction]
 }>()
@@ -19,7 +25,13 @@ const handleMove = (dir: Direction) => {
     emit('move', dir)
 }
 
-const { activeDir } = useKey(handleMove)
+const { activeDir } = useKey(handleMove, {
+    'ctrl+z': props.undo,
+    'meta+z': props.undo,
+    'ctrl+y': props.redo,
+    'meta+y': props.redo,
+    'r': props.reset, 
+})
 
 </script>
 
@@ -53,10 +65,11 @@ const { activeDir } = useKey(handleMove)
     display: flex;
     justify-content: center;
     align-items: center;
-    
+
     /* 使用经典 2048 底板的浅木质灰 */
-    background-color: #cdc1b4; 
-    color: #776e65; /* 图标颜色变深 */
+    background-color: #cdc1b4;
+    color: #776e65;
+    /* 图标颜色变深 */
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -73,15 +86,27 @@ const { activeDir } = useKey(handleMove)
 /* 🌟 按下时的物理反馈：变深、缩小、阴影消失 */
 .btn:active,
 .btn.is-pressed {
-    background-color: #8f7a66; /* 经典深木色 */
+    background-color: #8f7a66;
+    /* 经典深木色 */
     color: #f9f6f2;
     transform: scale(0.92);
     box-shadow: none;
 }
 
 /* 精确的十字定位 */
-.up { grid-area: 1/2/2/3; }
-.down { grid-area: 3/2/4/3; }
-.left { grid-area: 2/1/3/2; }
-.right { grid-area: 2/3/3/4; }
+.up {
+    grid-area: 1/2/2/3;
+}
+
+.down {
+    grid-area: 3/2/4/3;
+}
+
+.left {
+    grid-area: 2/1/3/2;
+}
+
+.right {
+    grid-area: 2/3/3/4;
+}
 </style>

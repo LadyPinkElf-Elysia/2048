@@ -16,6 +16,7 @@ const handleStart = () => {
 const ROW_OPTIONS = [3, 4, 5, 6, 7, 8, 9]
 const COL_OPTIONS = [3, 4, 5, 6, 7, 8, 9]
 const N_OPTIONS = [2, 3, 4]
+const TARGET_OPTIONS = Array.from({ length: 6 }, (_, i) => Math.pow(2, 11 + i))
 </script>
 
 <template>
@@ -33,6 +34,11 @@ const N_OPTIONS = [2, 3, 4]
         <el-form-item label="初始个数(n)">
             <el-select v-model="form.n" placeholder="请选择个数" class="custom-select">
                 <el-option v-for="n in N_OPTIONS" :key="n" :label="`${n}个`" :value="n"></el-option>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="目标数字(t)">
+            <el-select v-model="form.target" placeholder="请选择目标" class="custom-select">
+                <el-option v-for="n in TARGET_OPTIONS" :key="n" :label="`${n}`" :value="n"></el-option>
             </el-select>
         </el-form-item>
     </el-form>

@@ -8,7 +8,7 @@ const createZeroMatrix = (r: number, c: number): Matrix => Array.from({ length: 
 
 const copy = <T>(data: T): T => structuredClone(toRaw(data))
 
-export const createDefaultForm = () => ({ r: 4, c: 4, n: 2 })
+export const createDefaultForm = (): GameForm => ({ r: 4, c: 4, n: 2, target: 2048 })
 
 export const use2048 = defineStore('use2048', () => {
     const matrix = ref<Matrix>([])
@@ -17,6 +17,9 @@ export const use2048 = defineStore('use2048', () => {
     const currentIndex = ref(-1)
     const gameForm = ref<GameForm>(createDefaultForm())
     let isLocked = false
+
+    const hasWon = ref(false)          // 用来触发弹窗
+    const isKeepPlaying = ref(false)   // 记录玩家是否选择了“继续挑战”
 
     /**收集当前空格子*/
     const emptyCells = computed<Position[]>(() => {
@@ -70,16 +73,22 @@ export const use2048 = defineStore('use2048', () => {
 
     const move = (direction: Direction): boolean => {
         if (isLocked) return false
-        if (matrix.value.length === 0 || isLost.value) return false
+        if (matrix.value.length === 0 || isLost.value||hasWon.value) return false
 
         isLocked = true
-        setTimeout(() => { isLocked = false }, 100)
+        setTimeout(() => { isLocked = false }, 50)
 
         const moved = moveLogic(matrix.value, direction, (val) => { score.value += val })
 
         if (moved) {
             addTile()
             save()
+            if (!isKeepPlaying.value) {
+                const maxVal = Math.max(...matrix.value.flat())
+                if (maxVal >= gameForm.value.target) {
+                    hasWon.value = true
+                }
+            }
         }
         return moved
     }
@@ -100,24 +109,38 @@ export const use2048 = defineStore('use2048', () => {
         score.value = state.score
     }
 
-    const undo = (): void => goto(currentIndex.value - 1)
+    const undo = (): void => {
+        if (hasWon.value||isLost.value) return
+        goto(currentIndex.value-1)
+    }
 
-    const redo = (): void => goto(currentIndex.value + 1)
+    const redo = (): void => {
+        if (hasWon.value||isLost.value) return
+        goto(currentIndex.value + 1)
+    }
 
     const init = (): void => {
         matrix.value = createZeroMatrix(gameForm.value.r, gameForm.value.c)
         score.value = 0
         snapShot.value = []
         currentIndex.value = -1
+        hasWon.value = false
+        isKeepPlaying.value = false
         for (let i = 1; i <= gameForm.value.n; i++) {
             addTile()
         }
         save()
     }
 
+    const keepPlaying = () => {
+        hasWon.value = false
+        isKeepPlaying.value = true // 锁死，以后再也不弹了
+    }
+
     return {
         matrix, score, gameForm,
         emptyCells, isLost, canUndo, canRedo,
+        hasWon, keepPlaying,
         move, init, undo, redo
     }
 })

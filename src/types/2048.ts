@@ -14,7 +14,8 @@ export interface SnapShot {
 export interface GameForm {
     r: number,
     c: number,
-    n: number
+    n: number,
+    target:number
 }
 
 export interface ActionItem {
@@ -31,3 +32,5 @@ export interface StatItem{
     value:string|number
     icon?:any
 }
+
+export type ShortcutMap = Record<string, (e: KeyboardEvent) => void>
