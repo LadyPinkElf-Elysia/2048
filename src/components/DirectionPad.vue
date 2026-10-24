@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElButton, ElIcon } from 'element-plus';
+import { ElIcon } from 'element-plus';
 import { Back, Bottom, Right, Top } from '@element-plus/icons-vue';
 import { useKey } from '../composables/useKey';
 import type { Direction } from '../types/2048';

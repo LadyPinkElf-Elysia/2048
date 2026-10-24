@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ElForm, ElFormItem, ElSelect, ElOption, ElButton } from 'element-plus';
+import { ElForm, ElFormItem, ElSelect, ElOption } from 'element-plus';
 import type { GameForm } from '../types/2048';
 import { createDefaultForm } from '../stores/use2048';
 
