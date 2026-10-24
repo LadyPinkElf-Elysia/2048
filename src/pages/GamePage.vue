@@ -73,6 +73,7 @@ const statItems=computed<StatItem[]>(()=>[
 }
 
 .board-wrapper {
-    margin: 0 0;
+    width: 100%;
+    margin: 8px 0;
 }
 </style>

@@ -25,78 +25,91 @@ const boardStyle = computed(() => ({
 
 <style scoped>
 .board {
+    container-type: inline-size;
     display: grid;
-    grid-template-rows: repeat(var(--rows), minmax(60px, 80px));
-    grid-template-columns: repeat(var(--cols), minmax(60px, 80px));
-    gap: 5px;
-    width: max-content;
-    margin: 10px auto;
-    padding: 0;
+    grid-template-rows: repeat(var(--rows), 1fr);
+    grid-template-columns: repeat(var(--cols), 1fr);
+    gap: 2cqw;
+    padding: 2cqw;
+    border-radius: 3cqw;
+    aspect-ratio: 1;
+    width: 100%;
+    background: #bbada0;
+    box-sizing: border-box;
 }
 
 .cell {
-    width: 100%;
-    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 28px;
-    font-weight: bold;
-    background: #cdc1b4;
-    border-radius: 6px;
+    /* 基础字体大小，最大32px */
+    font-size: clamp(12px, 7cqw, 32px);
+    font-weight: 900; /* 加粗一点更有数字感 */
+    line-height: 1;
+    border-radius: 2cqw;
     color: #776e65;
+    overflow: hidden;
+    transition: all 0.1s;
+    background-color: #cdc1b4; 
 }
 
-.cell-2 {
-    background: #eee4da;
+/* === 基础色块 (2 ~ 2048) === */
+.cell-2 { background: #eee4da; }
+.cell-4 { background: #ede0c8; }
+.cell-8 { background: #f2b179; color: #f9f6f2; }
+.cell-16 { background: #f59563; color: #f9f6f2; }
+.cell-32 { background: #f67c5f; color: #f9f6f2; }
+.cell-64 { background: #f65e3b; color: #f9f6f2; }
+.cell-128 { background: #edcf72; color: #f9f6f2; font-size: clamp(10px, 6cqw, 28px); }
+.cell-256 { background: #edcc61; color: #f9f6f2; font-size: clamp(10px, 6cqw, 28px); }
+.cell-512 { background: #edc850; color: #f9f6f2; font-size: clamp(10px, 6cqw, 28px); }
+.cell-1024 { background: #edc53f; color: #f9f6f2; font-size: clamp(8px, 5cqw, 24px); }
+.cell-2048 { background: #edc22e; color: #f9f6f2; font-size: clamp(8px, 5cqw, 24px); box-shadow: 0 0 15px rgba(237, 194, 46, 0.5); }
+
+/* === 神仙色块 (4096 ~ 65536) === */
+/* 4096: 暗红/深橙渐变 */
+.cell-4096 {
+    background: linear-gradient(135deg, #ef6767, #c0392b);
+    color: #fff;
+    font-size: clamp(8px, 5cqw, 22px);
+    box-shadow: 0 0 15px rgba(239, 103, 103, 0.5);
 }
 
-.cell-4 {
-    background: #ede0c8;
+/* 8192: 神秘紫 */
+.cell-8192 {
+    background: linear-gradient(135deg, #a55eea, #8854d0);
+    color: #fff;
+    font-size: clamp(7px, 4.5cqw, 20px);
+    box-shadow: 0 0 15px rgba(165, 94, 234, 0.5);
 }
 
-.cell-8 {
-    background: #f2b179;
-    color: #f9f6f2;
+/* 16384: 科技蓝 */
+.cell-16384 {
+    background: linear-gradient(135deg, #45aaf2, #2d98da);
+    color: #fff;
+    font-size: clamp(6px, 4cqw, 18px);
+    box-shadow: 0 0 15px rgba(69, 170, 242, 0.5);
 }
 
-.cell-16 {
-    background: #f59563;
-    color: #f9f6f2;
+/* 32768: 极光绿 */
+.cell-32768 {
+    background: linear-gradient(135deg, #2ecc71, #20bf6b);
+    color: #fff;
+    font-size: clamp(5px, 3.5cqw, 16px);
+    box-shadow: 0 0 15px rgba(46, 204, 113, 0.5);
 }
 
-.cell-32 {
-    background: #f67c5f;
-    color: #f9f6f2;
+/* 65536: 黑洞黑金 */
+.cell-65536 {
+    background: linear-gradient(135deg, #2c3e50, #000000);
+    color: #f1c40f; /* 黑底金字 */
+    font-size: clamp(5px, 3.2cqw, 16px);
+    box-shadow: 0 0 20px rgba(241, 196, 15, 0.4);
+    text-shadow: 0 0 5px rgba(241, 196, 15, 0.6);
 }
 
-.cell-64 {
-    background: #f65e3b;
-    color: #f9f6f2;
-}
-
-.cell-128 {
-    background: #edcf72;
-    color: #f9f6f2;
-}
-
-.cell-256 {
-    background: #edcc61;
-    color: #f9f6f2;
-}
-
-.cell-512 {
-    background: #edc850;
-    color: #f9f6f2;
-}
-
-.cell-1024 {
-    background: #edc53f;
-    color: #f9f6f2;
-}
-
-.cell-2048 {
-    background: #edc22e;
-    color: #f9f6f2;
+/* 如果有玩家突破天际，成了 131072 这种 6 位数，用动态 CSS 缩字 */
+[class*="cell-1"] {
+    letter-spacing: -0.5px; /* 高位数稍微缩紧字间距 */
 }
 </style>
