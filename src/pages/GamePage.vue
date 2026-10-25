@@ -1,120 +1,45 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { PAGES } from '../constents/2048.ts';
 import router from '../router/index.ts';
 import { use2048 } from '../stores/use2048.ts';
-import type { ActionItem, Direction, StatItem } from '../types/2048.ts';
+import type { ActionItem, StatItem } from '../types/2048.ts';
 import { useTimer } from '../composables/useTimer.ts';
 import { Timer as TimerIcon, Trophy } from '@element-plus/icons-vue';
-import { ElMessageBox } from 'element-plus';
-import { formatShortcut, useKey } from '../composables/useKey.ts';
-import { useSwipe } from '../composables/useSwipe.ts';
+import { formatShortcut } from '../composables/useKey.ts';
+import { useGameStatus } from '../composables/useGameStatus.ts';
+import { useGameControl } from '../composables/useGameControl.ts';
+import { useTooltip } from '../composables/useTooltip.ts';
 
 const store = use2048()
 const timer = useTimer()
-const boardRef=ref<HTMLElement|null>(null)
-const keyboardRef=ref(window)
 
-const activeDir = ref<Direction | null>(null)
+// 1. DOM 引用
+const boardRef = ref<HTMLElement | null>(null) 
+const keyboardRef = ref(window)
 
-let isResetting = false
+// 2. 胜负弹窗逻辑
+useGameStatus(store, timer)
 
-const handleMove = (dir: Direction) => {
-    activeDir.value = dir
-    const moved = store.move(dir)
-    if (moved) timer.start()
-    setTimeout(() => {
-        if (activeDir.value === dir) activeDir.value = null
-    }, 50)
-}
+// 3. 输入控制逻辑
+const canMove = computed(() => !store.hasWon && !store.isLost)
 
-const handleReset = () => {
-    if (store.hasWon || store.isLost||isResetting) return
-    isResetting = true
-    store.init()
-    timer.reset()
-    setTimeout(() => {
-        isResetting = false
-    }, 100)
-}
-
-useKey(handleMove,keyboardRef,{
-    'ctrl+z': store.undo,
-    'meta+z': store.undo,
-    'ctrl+y': store.redo,
-    'meta+y': store.redo,
-    'r': handleReset
-})
-useSwipe(handleMove,boardRef,{threshold: 30})
-
-watch(() => store.hasWon, (won) => {
-    if (won) {
-        timer.pause() // 赢了先暂停时间
-
-        // 🌟 情况 A：达成目标的同时，棋盘正好死局了（绝杀通关）
-        if (store.isLost) {
-            ElMessageBox.alert(
-                `太神了！你不仅合成了 ${store.gameForm.target}，还填满了整个棋盘！完美通关！`,
-                '绝杀通关',
-                {
-                    confirmButtonText: '返回设置',
-                    type: 'success',
-                    center: true,
-                    callback: () => {
-                        store.init()
-                        router.push({ name: PAGES.Config })
-                    }
-                }
-            )
-            return
-        }
-
-        // 🌟 情况 B：正常活局达成目标，给玩家两个选择
-        ElMessageBox.confirm(
-            `恭喜！你成功合成了 ${store.gameForm.target}！`,
-            '挑战成功',
-            {
-                confirmButtonText: '继续挑战极限',
-                cancelButtonText: '结束并返回',
-                type: 'success',
-                center: true,
-                showClose: false, // 🌟 加上这句，防止点 X 或按 Esc 导致意外退出
-            }
-        ).then(() => {
-            // 🌟 选择继续：解除胜利锁定，恢复计时
-            store.keepPlaying()
-            timer.start()
-        }).catch(() => {
-            // 🌟 选择结束：重置游戏并返回设置页
-            store.init()
-            router.push({ name: PAGES.Config })
-        })
+const { activeDir, handleMove, handleReset } = useGameControl(
+    boardRef,
+    keyboardRef,
+    // 动作字典
+    {
+        move: store.move,
+        reset: () => { store.init(); timer.reset() },
+        undo: store.undo,
+        redo: store.redo
+    },
+    // 配置项
+    {
+        canMove,
+        onMoveSuccess: () => timer.start()
     }
-})
-
-watch(() => store.isLost, (lost) => {
-    if (lost) {
-        timer.pause() // 死亡即停表
-
-        // 如果同时达成了胜利，就交给上面的胜利弹窗处理，不要重复弹
-        if (store.hasWon) return
-
-        ElMessageBox.alert(
-            '棋盘已经填满了，没有可以合并的数字了。',
-            'Game Over',
-            {
-                confirmButtonText: '返回设置',
-                type: 'error', // 红色错误图标
-                center: true,
-                showClose: false, // 必须点按钮，防止误触
-                callback: () => {
-                    store.init()
-                    router.push({ name: PAGES.Config })
-                }
-            }
-        )
-    }
-})
+)
 
 const actions = computed<ActionItem[]>(() => [
     { key: 'back', label: '返回', onClick: () => router.push({ name: PAGES.Config }) },
@@ -127,6 +52,9 @@ const statItems = computed<StatItem[]>(() => [
     { label: '时间', value: timer.formattedTime.value, icon: TimerIcon },
     { label: '分数', value: store.score, icon: Trophy }
 ])
+
+const {canHover}=useTooltip()
+
 </script>
 
 <template>
@@ -138,14 +66,14 @@ const statItems = computed<StatItem[]>(() => [
         </div>
 
         <div class="action-bar-wrapper">
-            <ActionBar :actions="actions" />
+            <ActionBar :can-hover  :actions="actions" />
         </div>
 
         <div class="board-wrapper" ref="boardRef">
             <Board :form="store.gameForm" :m="store.matrix"></Board>
         </div>
 
-        <DirectionPad @move="handleMove" :active-dir></DirectionPad>
+        <DirectionPad :can-hover  @move="handleMove" :active-dir></DirectionPad>
     </div>
 </template>
 

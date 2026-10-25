@@ -48,3 +48,20 @@ export interface EventListenerItem<T extends string = string> {
     handler: EventListener
     options?: AddEventListenerOptions | boolean
 }
+
+// 🌟 1. 纯粹的动作字典（全是函数）
+export interface GameControlActions {
+    move: (dir: Direction) => boolean
+    reset: () => void
+    undo: () => void
+    redo: () => void
+}
+
+// 🌟 2. 纯粹的配置项（状态与回调）
+export interface GameControlOptions {
+    canMove: Ref<boolean>
+    onMoveSuccess?: () => void
+    highlightDuration?: number // 高亮时间，默认 50
+    resetDebounce?: number     // 防抖时间，默认 100
+    swipeThreshold?: number    // 滑动阈值，默认 30
+}

@@ -1,16 +1,16 @@
 import { onBeforeUnmount, onMounted, type Ref } from "vue";
 import type { Direction, EventListenerItem, SwipeOptions } from "../types/2048";
 
-export const useSwipe=(handleMove: (direction: Direction) => void,target: Ref<HTMLElement | null>,options: SwipeOptions = {})=>{
+export const useSwipe = (handleMove: (direction: Direction) => void, target: Ref<HTMLElement | null>, options: SwipeOptions = {}) => {
     const { threshold = 30 } = options
 
-    let startX=0
-    let startY=0
-    
-    const handleTouchStart=(e:Event)=>{
-        const touchEvent=e as TouchEvent
-        startX=touchEvent.touches[0].clientX
-        startY=touchEvent.touches[0].clientY
+    let startX = 0
+    let startY = 0
+
+    const handleTouchStart = (e: Event) => {
+        const touchEvent = e as TouchEvent
+        startX = touchEvent.touches[0].clientX
+        startY = touchEvent.touches[0].clientY
     }
 
     const handleTouchEnd = (e: Event) => {
@@ -27,28 +27,30 @@ export const useSwipe=(handleMove: (direction: Direction) => void,target: Ref<HT
         }
     }
 
-    const handleTouchMove=(e:Event)=>{
-        const touchEvent=e as TouchEvent
-        if(touchEvent.cancelable) touchEvent.preventDefault()
+    const handleTouchMove = (e: Event) => {
+        const touchEvent = e as TouchEvent
+        if (touchEvent.cancelable) touchEvent.preventDefault()
     }
 
-    const listeners:EventListenerItem[] = [
+    const listeners: EventListenerItem[] = [
         { type: 'touchstart', handler: handleTouchStart, options: { passive: false } },
         { type: 'touchmove', handler: handleTouchMove, options: { passive: false } },
         { type: 'touchend', handler: handleTouchEnd }
     ]
 
     onMounted(() => {
-        if (!target) return
+        const el = target.value as HTMLElement 
+        if (!el) return
         listeners.forEach((item) => {
-            target.value!.addEventListener(item.type, item.handler, item.options)
+            el.addEventListener(item.type, item.handler, item.options)
         })
     })
 
     onBeforeUnmount(() => {
-        if (!target) return
+        const el = target.value as HTMLElement 
+        if (!el) return
         listeners.forEach((item) => {
-            target.value!.removeEventListener(item.type, item.handler, item.options)
+            el.removeEventListener(item.type, item.handler, item.options)
         })
     })
 }

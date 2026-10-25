@@ -4,7 +4,8 @@ import { Back, Bottom, Right, Top } from '@element-plus/icons-vue';
 import type { Direction } from '../types/2048';
 
 const props = defineProps<{
-    activeDir:Direction | null
+    activeDir: Direction | null
+    canHover:boolean
 }>()
 
 const emit = defineEmits<{
@@ -12,26 +13,30 @@ const emit = defineEmits<{
 }>()
 
 const btns = {
-    'up': Top,
-    'down': Bottom,
-    'left': Back,
-    'right': Right,
+    'up': { icon: Top, hint: '向上 (↑ / W)' },
+    'down': { icon: Bottom, hint: '向下 (↓ / S)' },
+    'left': { icon: Back, hint: '向左 (← / A)' },
+    'right': { icon: Right, hint: '向右 (→ / D)' },
 }
 
 const handleMove = (dir: Direction) => {
     emit('move', dir)
 }
-
 </script>
 
 <template>
     <div class="direction-pad">
-        <button v-for="(icon, dir) in btns" :key="dir" :class="['btn', dir, { 'is-pressed': activeDir === dir }]"
-            @click="handleMove(dir as Direction)">
-            <el-icon>
-                <component :is="icon"></component>
-            </el-icon>
-        </button>
+        <template v-for="(item, dir) in btns" :key="dir">
+            <!-- 🌟 一行搞定 -->
+            <HoverTooltip :can-hover :content="item.hint">
+                <button :class="['btn', dir, { 'is-pressed': activeDir === dir }]"
+                    @click="handleMove(dir as Direction)">
+                    <el-icon>
+                        <component :is="item.icon"></component>
+                    </el-icon>
+                </button>
+            </HoverTooltip>
+        </template>
     </div>
 </template>
 
@@ -45,7 +50,7 @@ const handleMove = (dir: Direction) => {
     margin: 10px auto 0;
 }
 
-/* 🌟 去掉所有原本 Element Plus 的属性，改用原生的圆角方块 */
+/* 🌟 为了让 tooltip 包裹不影响网格布局，建议给按钮加宽高，或者直接在 el-tooltip 内部保持 */
 .btn {
     margin: 0;
     padding: 0;
@@ -54,11 +59,8 @@ const handleMove = (dir: Direction) => {
     display: flex;
     justify-content: center;
     align-items: center;
-
-    /* 使用经典 2048 底板的浅木质灰 */
     background-color: #cdc1b4;
     color: #776e65;
-    /* 图标颜色变深 */
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -67,16 +69,13 @@ const handleMove = (dir: Direction) => {
     box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3), 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* 悬浮稍微变深一点 */
 .btn:hover {
     background-color: #bbada0;
 }
 
-/* 🌟 按下时的物理反馈：变深、缩小、阴影消失 */
 .btn:active,
 .btn.is-pressed {
     background-color: #8f7a66;
-    /* 经典深木色 */
     color: #f9f6f2;
     transform: scale(0.92);
     box-shadow: none;

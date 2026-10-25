@@ -1,23 +1,18 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
 import type { ActionItem } from '../types/2048';
 
 defineProps<{
     actions: ActionItem[]
+    canHover:boolean
 }>()
 
-const canHover = ref(true)
-onMounted(() => {
-    canHover.value = window.matchMedia('(hover: hover)').matches
-})
 </script>
 
 <template>
     <div class="action-bar">
         <div v-for="item in actions" :key="item.key" class="btn-wrapper">
-            <!-- PC 端显示 Tooltip -->
-            <el-tooltip v-if="canHover" :content="item.shortcut ? `${item.label} (${item.shortcut})` : item.label"
-                placement="top" :show-after="200">
+            <!-- 🌟 一行代码搞定 Tooltip 判定 -->
+            <HoverTooltip :can-hover :content="item.shortcut ? `${item.label} (${item.shortcut})` : item.label">
                 <el-button class="btn" :type="item.type || 'default'" @click="item.onClick" :disabled="item.disabled"
                     plain>
                     <el-icon v-if="item.icon">
@@ -25,17 +20,7 @@ onMounted(() => {
                     </el-icon>
                     <span>{{ item.label }}</span>
                 </el-button>
-            </el-tooltip>
-
-            <!-- 移动端直接显示按钮 -->
-            <el-button v-else class="btn" :type="item.type || 'default'" @click="item.onClick" :disabled="item.disabled"
-                plain>
-                <el-icon v-if="item.icon">
-                    <component :is="item.icon"></component>
-                </el-icon>
-                <span>{{ item.label }}</span>
-            </el-button>
-
+            </HoverTooltip>
         </div>
     </div>
 </template>
@@ -44,7 +29,7 @@ onMounted(() => {
 .action-bar {
     display: flex;
     justify-content: center;
-    flex-wrap: nowrap; 
+    flex-wrap: nowrap;
     gap: 8px;
     width: 100%;
 }
@@ -53,7 +38,8 @@ onMounted(() => {
 .btn-wrapper {
     flex: 1;
     display: flex;
-    min-width: 0; /* 允许极窄屏幕时压缩 */
+    min-width: 0;
+    /* 允许极窄屏幕时压缩 */
 }
 
 /* 🌟 按钮撑满包裹层 */
@@ -62,7 +48,7 @@ onMounted(() => {
     background: #8f7a66;
     color: #f9f6f2;
     border: none;
-    padding: 10px 0; 
+    padding: 10px 0;
     border-radius: 6px;
     font-size: 14px;
     font-weight: bold;

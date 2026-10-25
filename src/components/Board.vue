@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { GameForm, Matrix } from '../types/2048';
+import { useBoardStyle } from '../composables/useBoardStyle';
 
 const props = defineProps<{
     form: GameForm
@@ -11,40 +12,10 @@ const boardStyle = computed(() => ({
     '--rows': props.form.r,
     '--cols': props.form.c,
     '--cell-w': `calc(min(100vw, 560px) / ${props.form.c + 1})`
+    // 🌟 分母 + 1 是为了给 gap 和 padding 预留空间，防止棋盘在手机上撑破屏幕
 }))
 
-const getCellStyle = (val: number) => {
-    if (val === 0) return {}
-    
-    // 计算指数：2(1), 4(2), 8(3) ...
-    const exponent = Math.log2(val)
-    
-    // 特殊处理 2 和 4 的浅色
-    if (val === 2) return { background: '#eee4da', color: '#776e65' }
-    if (val === 4) return { background: '#ede0c8', color: '#776e65' }
-    
-    // 从 8 (3次方) 开始，色相为 30 (橙色)，每升一级色相增加 25
-    // 这样颜色会平滑地从橙色 -> 红色 -> 紫色 -> 蓝色 -> 绿色 循环
-    const hue = 30 + (exponent - 3) * 25
-    
-    return {
-        background: `hsl(${hue}, 70%, 55%)`,
-        color: '#fff',
-        boxShadow: val >= 2048 ? `0 0 15px hsla(${hue}, 80%, 60%, 0.5)` : 'none'
-    }
-}
-
-
-const getFontScale = (val: number) => {
-    if (val === 0) return '100%'
-    const len = val.toString().length
-    return `${Math.max(25, 200 / len)}%`
-    // 🌟 纯数学公式：以 2 位数为基准（200 / 2 = 100%）
-    // 3 位数 -> 200/3 = 66%
-    // 4 位数 -> 200/4 = 50%
-    // 5 位数 -> 200/5 = 40%
-    // Math.max(25, ...) 是为了防止 8 位数时字号变成 0
-}
+const { getCellStyle, getFontScale } = useBoardStyle()
 </script>
 
 <template>
@@ -76,7 +47,6 @@ const getFontScale = (val: number) => {
 .cell {
     /* 🌟 核心魔法：让每一个格子都保持绝对的正方形 */
     aspect-ratio: 1;
-    
     display: flex;
     justify-content: center;
     align-items: center;
@@ -84,7 +54,7 @@ const getFontScale = (val: number) => {
     font-family: 'Helvetica Neue', Arial, sans-serif;
     font-weight: bold;
     line-height: 1;
-    background-color: #cdc1b4; 
+    background-color: #cdc1b4;
     border-radius: calc(var(--cell-w) * 0.1);
     color: #776e65;
     overflow: hidden;

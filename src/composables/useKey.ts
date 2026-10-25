@@ -44,8 +44,8 @@ export const useKey = (handleMove: (direction: Direction) => void, target: Targe
     const handleKeydown: EventListener = (e): void => {
         const kbEvent = e as KeyboardEvent
         const target = kbEvent.target as HTMLElement
-        if (target instanceof HTMLInputElement ||target instanceof HTMLTextAreaElement ||target.isContentEditable) return
-        
+        if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target.isContentEditable) return
+
         if (kbEvent.repeat) return
 
         const combo = getComboKey(kbEvent)
@@ -72,14 +72,18 @@ export const useKey = (handleMove: (direction: Direction) => void, target: Targe
     ]
 
     onMounted(() => {
+        const el = target.value as HTMLElement
+        if (!el) return
         listeners.forEach((item) => {
-            target.value!.addEventListener(item.type, item.handler)
+            el.addEventListener(item.type, item.handler)
         })
     })
 
     onBeforeUnmount(() => {
+        const el = target.value as HTMLElement 
+        if (!el) return
         listeners.forEach((item) => {
-            target.value!.removeEventListener(item.type, item.handler)
+            el.removeEventListener(item.type, item.handler)
         })
     })
 }

@@ -13,32 +13,26 @@ const handleStart = () => {
     emit('start')
 }
 
-const ROW_OPTIONS = [3, 4, 5, 6, 7, 8, 9]
-const COL_OPTIONS = [3, 4, 5, 6, 7, 8, 9]
-const N_OPTIONS = [2, 3, 4]
+const ROW_OPTIONS = Array.from({ length: 7 }, (_, i) => i + 3)
+const COL_OPTIONS = Array.from({ length: 7 }, (_, i) => i + 3)
+const N_OPTIONS = Array.from({ length: 3 }, (_, i) => i + 2)
 const TARGET_OPTIONS = Array.from({ length: 6 }, (_, i) => Math.pow(2, 11 + i))
+
+const formConfig = [
+    { label: '行数(r)', key: 'r' as const, options: ROW_OPTIONS, suffix: '行', placeholder: '请选择行数' },
+    { label: '列数(c)', key: 'c' as const, options: COL_OPTIONS, suffix: '列', placeholder: '请选择列数' },
+    { label: '初始个数(n)', key: 'n' as const, options: N_OPTIONS, suffix: '个', placeholder: '请选择个数' },
+    { label: '目标数字(t)', key: 'target' as const, options: TARGET_OPTIONS, suffix: '', placeholder: '请选择目标' }
+]
+
 </script>
 
 <template>
     <el-form label-width="100px" label-position="left" class="game-setup-form">
-        <el-form-item label="行数(r)">
-            <el-select v-model="form.r" placeholder="请选择行数" class="custom-select">
-                <el-option v-for="n in ROW_OPTIONS" :key="n" :label="`${n}行`" :value="n"></el-option>
-            </el-select>
-        </el-form-item>
-        <el-form-item label="列数(c)">
-            <el-select v-model="form.c" placeholder="请选择列数" class="custom-select">
-                <el-option v-for="n in COL_OPTIONS" :key="n" :label="`${n}列`" :value="n"></el-option>
-            </el-select>
-        </el-form-item>
-        <el-form-item label="初始个数(n)">
-            <el-select v-model="form.n" placeholder="请选择个数" class="custom-select">
-                <el-option v-for="n in N_OPTIONS" :key="n" :label="`${n}个`" :value="n"></el-option>
-            </el-select>
-        </el-form-item>
-        <el-form-item label="目标数字(t)">
-            <el-select v-model="form.target" placeholder="请选择目标" class="custom-select">
-                <el-option v-for="n in TARGET_OPTIONS" :key="n" :label="`${n}`" :value="n"></el-option>
+        <el-form-item v-for="item in formConfig" :key="item.key" :label="item.label">
+            <el-select v-model="form[item.key]" :placeholder="item.placeholder" class="custom-select">
+                <el-option v-for="n in item.options" :key="n" :label="item.suffix ? `${n}${item.suffix}` : `${n}`"
+                    :value="n" />
             </el-select>
         </el-form-item>
     </el-form>
