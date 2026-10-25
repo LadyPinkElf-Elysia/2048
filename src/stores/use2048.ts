@@ -16,10 +16,11 @@ export const use2048 = defineStore('use2048', () => {
     const snapShot = ref<SnapShot[]>([])
     const currentIndex = ref(-1)
     const gameForm = ref<GameForm>(createDefaultForm())
-    let isLocked = false
 
     const hasWon = ref(false)          // 用来触发弹窗
     const isKeepPlaying = ref(false)   // 记录玩家是否选择了“继续挑战”
+
+    let isLocked = false
 
     /**收集当前空格子*/
     const emptyCells = computed<Position[]>(() => {
@@ -35,24 +36,19 @@ export const use2048 = defineStore('use2048', () => {
     })
 
     const isLost = computed(() => {
-        // 1. 如果矩阵还没初始化，或者还有空位，绝对没输
         if (matrix.value.length === 0 || emptyCells.value.length > 0) return false
 
         const rows = matrix.value.length
         const cols = matrix.value[0].length
 
-        // 2. 如果没有空位了，检查是否有相邻相同的数字
         for (let r = 0; r < rows; r++) {
             for (let c = 0; c < cols; c++) {
                 const v = matrix.value[r][c]
-                // 检查右边是否有相同的
                 if (c < cols - 1 && v === matrix.value[r][c + 1]) return false
-                // 检查下边是否有相同的
                 if (r < rows - 1 && v === matrix.value[r + 1][c]) return false
             }
         }
 
-        // 3. 既没空位，也没有可合并的，真死局
         return true
     })
 
@@ -134,7 +130,7 @@ export const use2048 = defineStore('use2048', () => {
 
     const keepPlaying = () => {
         hasWon.value = false
-        isKeepPlaying.value = true // 锁死，以后再也不弹了
+        isKeepPlaying.value = true 
     }
 
     return {

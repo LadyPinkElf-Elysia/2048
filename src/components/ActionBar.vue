@@ -3,7 +3,7 @@ import type { ActionItem } from '../types/2048';
 
 defineProps<{
     actions: ActionItem[]
-    canHover:boolean
+    canHover: boolean
 }>()
 
 </script>
@@ -11,7 +11,6 @@ defineProps<{
 <template>
     <div class="action-bar">
         <div v-for="item in actions" :key="item.key" class="btn-wrapper">
-            <!-- 🌟 一行代码搞定 Tooltip 判定 -->
             <HoverTooltip :can-hover :content="item.shortcut ? `${item.label} (${item.shortcut})` : item.label">
                 <el-button class="btn" :type="item.type || 'default'" @click="item.onClick" :disabled="item.disabled"
                     plain>
@@ -34,15 +33,12 @@ defineProps<{
     width: 100%;
 }
 
-/* 🌟 核心：包裹层占满剩余空间，让四个按钮等宽 */
 .btn-wrapper {
     flex: 1;
     display: flex;
     min-width: 0;
-    /* 允许极窄屏幕时压缩 */
 }
 
-/* 🌟 按钮撑满包裹层 */
 .btn {
     width: 100%;
     background: #8f7a66;

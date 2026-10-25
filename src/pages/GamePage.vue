@@ -14,27 +14,22 @@ import { useTooltip } from '../composables/useTooltip.ts';
 const store = use2048()
 const timer = useTimer()
 
-// 1. DOM 引用
 const boardRef = ref<HTMLElement | null>(null) 
 const keyboardRef = ref(window)
 
-// 2. 胜负弹窗逻辑
 useGameStatus(store, timer)
 
-// 3. 输入控制逻辑
 const canMove = computed(() => !store.hasWon && !store.isLost)
 
 const { activeDir, handleMove, handleReset } = useGameControl(
     boardRef,
     keyboardRef,
-    // 动作字典
     {
         move: store.move,
         reset: () => { store.init(); timer.reset() },
         undo: store.undo,
         redo: store.redo
     },
-    // 配置项
     {
         canMove,
         onMoveSuccess: () => timer.start()
@@ -96,7 +91,6 @@ const {canHover}=useTooltip()
     width: 100%;
     margin: 8px 0;
     display: flex;
-    /* 🌟 确保内部棋盘能 100% 撑开 */
     justify-content: center;
 }
 </style>

@@ -1,5 +1,4 @@
 export const useBoardStyle = () => {
-    // 🌟 颜色算法：从 8(3次方) 开始，色相 30，每升一级 +25
     const getCellStyle = (val: number) => {
         if (val === 0) return {}
         const exponent = Math.log2(val)
@@ -14,7 +13,6 @@ export const useBoardStyle = () => {
         }
     }
 
-    // 🌟 字号算法：200 / 位数
     const getFontScale = (val: number) => {
         if (val === 0) return '100%'
         const len = val.toString().length

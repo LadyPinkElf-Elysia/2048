@@ -12,7 +12,6 @@ const boardStyle = computed(() => ({
     '--rows': props.form.r,
     '--cols': props.form.c,
     '--cell-w': `calc(min(100vw, 560px) / ${props.form.c + 1})`
-    // 🌟 分母 + 1 是为了给 gap 和 padding 预留空间，防止棋盘在手机上撑破屏幕
 }))
 
 const { getCellStyle, getFontScale } = useBoardStyle()
@@ -39,13 +38,11 @@ const { getCellStyle, getFontScale } = useBoardStyle()
     padding: calc(var(--cell-w) * 0.1);
     border-radius: 8px;
     width: 100%;
-    /* 🌟 删掉 aspect-ratio: 1，让高度由格子自己撑开 */
     background: #bbada0;
     box-sizing: border-box;
 }
 
 .cell {
-    /* 🌟 核心魔法：让每一个格子都保持绝对的正方形 */
     aspect-ratio: 1;
     display: flex;
     justify-content: center;

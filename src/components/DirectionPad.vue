@@ -5,7 +5,7 @@ import type { Direction } from '../types/2048';
 
 const props = defineProps<{
     activeDir: Direction | null
-    canHover:boolean
+    canHover: boolean
 }>()
 
 const emit = defineEmits<{
@@ -27,7 +27,6 @@ const handleMove = (dir: Direction) => {
 <template>
     <div class="direction-pad">
         <template v-for="(item, dir) in btns" :key="dir">
-            <!-- 🌟 一行搞定 -->
             <HoverTooltip :can-hover :content="item.hint">
                 <button :class="['btn', dir, { 'is-pressed': activeDir === dir }]"
                     @click="handleMove(dir as Direction)">
@@ -50,7 +49,6 @@ const handleMove = (dir: Direction) => {
     margin: 10px auto 0;
 }
 
-/* 🌟 为了让 tooltip 包裹不影响网格布局，建议给按钮加宽高，或者直接在 el-tooltip 内部保持 */
 .btn {
     margin: 0;
     padding: 0;
@@ -81,7 +79,6 @@ const handleMove = (dir: Direction) => {
     box-shadow: none;
 }
 
-/* 精确的十字定位 */
 .up {
     grid-area: 1/2/2/3;
 }

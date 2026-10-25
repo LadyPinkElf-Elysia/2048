@@ -3,7 +3,6 @@ import type { Direction, EventListenerItem, ShortcutMap, TargetType } from "../t
 
 export const isMac = /Mac|iPod|iPhone|iPad/.test(navigator.userAgent)
 
-// 🌟 格式化快捷键文本（自动把 'ctrl' 替换为 'Cmd'，把 'alt' 替换为 'Option' 等）
 export const formatShortcut = (shortcut: string): string => {
     if (!shortcut) return ''
     if (isMac) {
@@ -33,12 +32,11 @@ export const useKey = (handleMove: (direction: Direction) => void, target: Targe
         if (e.shiftKey) keys.push('shift')
 
         const mainKey = e.key.toLowerCase()
-        // 排除纯修饰键单独按下的情况，避免生成 "ctrl+control" 这种鬼东西
         if (!['control', 'meta', 'alt', 'shift'].includes(mainKey)) {
             keys.push(mainKey)
         }
 
-        return keys.join('+') // 例如：Ctrl+Z -> "ctrl+z"，Shift+ArrowUp -> "shift+arrowup"
+        return keys.join('+') 
     }
 
     const handleKeydown: EventListener = (e): void => {
@@ -56,10 +54,8 @@ export const useKey = (handleMove: (direction: Direction) => void, target: Targe
             return
         }
 
-        // 🌟 2. 只要带有功能修饰键，且没被上面的 shortcuts 拦截，就绝不作为移动指令
         if (kbEvent.ctrlKey || kbEvent.metaKey || kbEvent.altKey) return
 
-        // 🌟 4. 常规方向键处理
         const dir = keyMap[kbEvent.key]
         if (dir) {
             e.preventDefault()
@@ -80,7 +76,7 @@ export const useKey = (handleMove: (direction: Direction) => void, target: Targe
     })
 
     onBeforeUnmount(() => {
-        const el = target.value as HTMLElement 
+        const el = target.value as HTMLElement
         if (!el) return
         listeners.forEach((item) => {
             el.removeEventListener(item.type, item.handler)

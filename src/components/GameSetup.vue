@@ -2,6 +2,7 @@
 import { ElForm, ElFormItem, ElSelect, ElOption } from 'element-plus';
 import type { GameForm } from '../types/2048';
 import { createDefaultForm } from '../stores/use2048';
+import { ROW_OPTIONS, COL_OPTIONS, N_OPTIONS, TARGET_OPTIONS } from '../constents/2048';
 
 const emit = defineEmits<{
     start: []
@@ -12,11 +13,6 @@ const form = defineModel<GameForm>('form', { default: () => createDefaultForm() 
 const handleStart = () => {
     emit('start')
 }
-
-const ROW_OPTIONS = Array.from({ length: 7 }, (_, i) => i + 3)
-const COL_OPTIONS = Array.from({ length: 7 }, (_, i) => i + 3)
-const N_OPTIONS = Array.from({ length: 3 }, (_, i) => i + 2)
-const TARGET_OPTIONS = Array.from({ length: 6 }, (_, i) => Math.pow(2, 11 + i))
 
 const formConfig = [
     { label: '行数(r)', key: 'r' as const, options: ROW_OPTIONS, suffix: '行', placeholder: '请选择行数' },
@@ -48,7 +44,6 @@ const formConfig = [
     width: 100%;
 }
 
-/* 让 Select 边框稍显圆润，颜色融入主题 */
 .custom-select {
     width: 100%;
 }
@@ -57,14 +52,12 @@ const formConfig = [
     border-radius: 8px;
     background-color: #fcfbf9;
     box-shadow: 0 0 0 1px #cdc1b4 inset;
-    /* 替换默认边框 */
 }
 
 :deep(.el-select__wrapper.is-focused) {
     box-shadow: 0 0 0 1px #8f7a66 inset;
 }
 
-/* 木质开始按钮 */
 .submit-wrapper {
     display: flex;
     justify-content: center;

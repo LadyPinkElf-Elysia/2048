@@ -12,15 +12,12 @@ const router=createRouter({
 })
 
 router.beforeEach((to) => {
-    // 如果要去游戏页
     if (to.name === PAGES.Game) {
         const store = use2048()
-        // 如果矩阵为空，返回重定向的目标
         if (store.matrix.length === 0) {
             return { name: PAGES.Config }
         }
     }
-    // 其他情况默认放行（返回 undefined 或 true）
 })
 
 export default router

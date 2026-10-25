@@ -4,10 +4,10 @@ import { useSwipe } from './useSwipe'
 import type { Direction, GameControlActions, GameControlOptions, TargetType } from '../types/2048'
 
 export const useGameControl = (
-    boardRef: TargetType,        // 目标1：棋盘
-    keyboardRef: TargetType,     // 目标2：键盘
-    actions: GameControlActions, // 动作字典
-    options: GameControlOptions  // 配置项
+    boardRef: TargetType,        
+    keyboardRef: TargetType,     
+    actions: GameControlActions, 
+    options: GameControlOptions  
 ) => {
     const { move, reset, undo, redo } = actions
     const { canMove, onMoveSuccess, highlightDuration = 50, resetDebounce = 100, swipeThreshold = 30 } = options

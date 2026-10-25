@@ -11,7 +11,6 @@ export const useGameStatus = (
 ) => {
     const router = useRouter()
 
-    // 监听胜利
     watch(() => store.hasWon, (won) => {
         if (!won) return
         timer.pause()
@@ -41,7 +40,6 @@ export const useGameStatus = (
         })
     })
 
-    // 监听失败
     watch(() => store.isLost, (lost) => {
         if (!lost || store.hasWon) return
         timer.pause()

@@ -20,7 +20,7 @@ defineProps<{
 
 <style scoped>
 .stat-item {
-    flex: 1; /* 🌟 让两个卡片等宽 */
+    flex: 1; 
     max-width: 120px;
     display: flex;
     flex-direction: column;

@@ -19,7 +19,6 @@ export const useTimer=()=>{
         }, 500)
     }
 
-    /** 暂停计时 */
     const pause = () => {
         if (timerId) {
             clearInterval(timerId)
@@ -27,13 +26,11 @@ export const useTimer=()=>{
         }
     }
 
-    /** 重置归零 */
     const reset = () => {
         pause()
         seconds.value = 0
     }
 
-    // 组件销毁时自动清理定时器，防止内存泄漏
     onBeforeUnmount(() => {
         pause()
     })
