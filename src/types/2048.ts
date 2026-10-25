@@ -1,3 +1,4 @@
+import type { Ref } from "vue"
 import type { DIRECTION } from "../constents/2048"
 
 export type Direction = typeof DIRECTION[keyof typeof DIRECTION]
@@ -34,4 +35,16 @@ export interface StatItem{
     icon?:any
 }
 
-export type ShortcutMap = Record<string, (e: KeyboardEvent) => void>
+export type TargetType = Ref<Window | HTMLElement | null>
+
+export type ShortcutMap = Record<string, () => void>
+
+export interface SwipeOptions {
+    threshold?: number
+}
+
+export interface EventListenerItem<T extends string = string> {
+    type: T
+    handler: EventListener
+    options?: AddEventListenerOptions | boolean
+}

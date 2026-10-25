@@ -10,7 +10,7 @@ const props = defineProps<{
 const boardStyle = computed(() => ({
     '--rows': props.form.r,
     '--cols': props.form.c,
-    '--cell-w': `calc(min(100vw, 560px) / ${props.form.c})`
+    '--cell-w': `calc(min(100vw, 560px) / ${props.form.c + 1})`
 }))
 
 const getCellStyle = (val: number) => {

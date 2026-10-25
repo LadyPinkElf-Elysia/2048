@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { ElIcon } from 'element-plus';
 import { Back, Bottom, Right, Top } from '@element-plus/icons-vue';
-import { useKey } from '../composables/useKey';
 import type { Direction } from '../types/2048';
 
 const props = defineProps<{
-    undo: () => void
-    redo: () => void
-    reset: () => void
+    activeDir:Direction | null
 }>()
 
 const emit = defineEmits<{
@@ -24,14 +21,6 @@ const btns = {
 const handleMove = (dir: Direction) => {
     emit('move', dir)
 }
-
-const { activeDir } = useKey(handleMove, {
-    'ctrl+z': props.undo,
-    'meta+z': props.undo,
-    'ctrl+y': props.redo,
-    'meta+y': props.redo,
-    'r': props.reset, 
-})
 
 </script>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { PAGES } from '../constents/2048.ts';
 import router from '../router/index.ts';
 import { use2048 } from '../stores/use2048.ts';
@@ -7,14 +7,45 @@ import type { ActionItem, Direction, StatItem } from '../types/2048.ts';
 import { useTimer } from '../composables/useTimer.ts';
 import { Timer as TimerIcon, Trophy } from '@element-plus/icons-vue';
 import { ElMessageBox } from 'element-plus';
+import { formatShortcut, useKey } from '../composables/useKey.ts';
+import { useSwipe } from '../composables/useSwipe.ts';
 
 const store = use2048()
 const timer = useTimer()
+const boardRef=ref<HTMLElement|null>(null)
+const keyboardRef=ref(window)
+
+const activeDir = ref<Direction | null>(null)
+
+let isResetting = false
 
 const handleMove = (dir: Direction) => {
+    activeDir.value = dir
     const moved = store.move(dir)
     if (moved) timer.start()
+    setTimeout(() => {
+        if (activeDir.value === dir) activeDir.value = null
+    }, 50)
 }
+
+const handleReset = () => {
+    if (store.hasWon || store.isLost||isResetting) return
+    isResetting = true
+    store.init()
+    timer.reset()
+    setTimeout(() => {
+        isResetting = false
+    }, 100)
+}
+
+useKey(handleMove,keyboardRef,{
+    'ctrl+z': store.undo,
+    'meta+z': store.undo,
+    'ctrl+y': store.redo,
+    'meta+y': store.redo,
+    'r': handleReset
+})
+useSwipe(handleMove,boardRef,{threshold: 30})
 
 watch(() => store.hasWon, (won) => {
     if (won) {
@@ -85,21 +116,11 @@ watch(() => store.isLost, (lost) => {
     }
 })
 
-const handleReset = () => {
-    if (store.hasWon || store.isLost) return
-    store.init()
-    timer.reset()
-}
-
-const isMac = /Mac|iPod|iPhone|iPad/.test(navigator.userAgent)
-// 如果是 Mac 显示 Cmd，否则显示 Ctrl
-const cmdKey = isMac ? 'Cmd' : 'Ctrl'
-
 const actions = computed<ActionItem[]>(() => [
     { key: 'back', label: '返回', onClick: () => router.push({ name: PAGES.Config }) },
     { key: 'reset', label: '重开', onClick: handleReset },
-    { key: 'undo', label: '撤回', disabled: !store.canUndo || store.hasWon, onClick: store.undo, shortcut: `${cmdKey}+Z` },
-    { key: 'redo', label: '重做', disabled: !store.canRedo || store.hasWon, onClick: store.redo, shortcut: `${cmdKey}+Y` }
+    { key: 'undo', label: '撤回', disabled: !store.canUndo || store.hasWon, onClick: store.undo, shortcut: formatShortcut('ctrl+z') },
+    { key: 'redo', label: '重做', disabled: !store.canRedo || store.hasWon, onClick: store.redo, shortcut: formatShortcut('ctrl+y') }
 ])
 
 const statItems = computed<StatItem[]>(() => [
@@ -120,11 +141,11 @@ const statItems = computed<StatItem[]>(() => [
             <ActionBar :actions="actions" />
         </div>
 
-        <div class="board-wrapper">
+        <div class="board-wrapper" ref="boardRef">
             <Board :form="store.gameForm" :m="store.matrix"></Board>
         </div>
 
-        <DirectionPad @move="handleMove" :undo="store.undo" :redo="store.redo" :reset="handleReset"></DirectionPad>
+        <DirectionPad @move="handleMove" :active-dir></DirectionPad>
     </div>
 </template>
 

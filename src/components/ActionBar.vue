@@ -1,27 +1,42 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import type { ActionItem } from '../types/2048';
 
 defineProps<{
     actions: ActionItem[]
 }>()
+
+const canHover = ref(true)
+onMounted(() => {
+    canHover.value = window.matchMedia('(hover: hover)').matches
+})
 </script>
 
 <template>
     <div class="action-bar">
-        <template v-for="item in actions" :key="item.key">
-            <el-tooltip :content="item.shortcut ? `${item.label} (${item.shortcut})` : item.label" placement="top"
-                :show-after="200">
+        <div v-for="item in actions" :key="item.key" class="btn-wrapper">
+            <!-- PC 端显示 Tooltip -->
+            <el-tooltip v-if="canHover" :content="item.shortcut ? `${item.label} (${item.shortcut})` : item.label"
+                placement="top" :show-after="200">
                 <el-button class="btn" :type="item.type || 'default'" @click="item.onClick" :disabled="item.disabled"
                     plain>
                     <el-icon v-if="item.icon">
                         <component :is="item.icon"></component>
                     </el-icon>
-                    <span>
-                        {{ item.label }}
-                    </span>
+                    <span>{{ item.label }}</span>
                 </el-button>
             </el-tooltip>
-        </template>
+
+            <!-- 移动端直接显示按钮 -->
+            <el-button v-else class="btn" :type="item.type || 'default'" @click="item.onClick" :disabled="item.disabled"
+                plain>
+                <el-icon v-if="item.icon">
+                    <component :is="item.icon"></component>
+                </el-icon>
+                <span>{{ item.label }}</span>
+            </el-button>
+
+        </div>
     </div>
 </template>
 
@@ -29,23 +44,25 @@ defineProps<{
 .action-bar {
     display: flex;
     justify-content: center;
-    /* 🌟 1. 强制不换行 */
-    flex-wrap: nowrap;
+    flex-wrap: nowrap; 
     gap: 8px;
     width: 100%;
 }
 
-.btn {
-    /* 🌟 2. 让每个按钮等宽填满整行 */
+/* 🌟 核心：包裹层占满剩余空间，让四个按钮等宽 */
+.btn-wrapper {
     flex: 1;
-    min-width: 0;
-    /* 允许文本在极窄时收缩 */
+    display: flex;
+    min-width: 0; /* 允许极窄屏幕时压缩 */
+}
 
+/* 🌟 按钮撑满包裹层 */
+.btn {
+    width: 100%;
     background: #8f7a66;
     color: #f9f6f2;
     border: none;
-    /* 🌟 3. 去掉左右 padding，靠 flex 自动撑开，这样绝对不会溢出 */
-    padding: 10px 0;
+    padding: 10px 0; 
     border-radius: 6px;
     font-size: 14px;
     font-weight: bold;
