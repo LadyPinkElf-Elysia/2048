@@ -69,7 +69,7 @@ export const use2048 = defineStore('use2048', () => {
 
     const move = (direction: Direction): boolean => {
         if (isLocked) return false
-        if (matrix.value.length === 0 || isLost.value||hasWon.value) return false
+        if (matrix.value.length === 0 || isLost.value || hasWon.value) return false
 
         isLocked = true
         setTimeout(() => { isLocked = false }, 50)
@@ -106,12 +106,12 @@ export const use2048 = defineStore('use2048', () => {
     }
 
     const undo = (): void => {
-        if (hasWon.value||isLost.value) return
-        goto(currentIndex.value-1)
+        if (hasWon.value || isLost.value) return
+        goto(currentIndex.value - 1)
     }
 
     const redo = (): void => {
-        if (hasWon.value||isLost.value) return
+        if (hasWon.value || isLost.value) return
         goto(currentIndex.value + 1)
     }
 
@@ -130,7 +130,7 @@ export const use2048 = defineStore('use2048', () => {
 
     const keepPlaying = () => {
         hasWon.value = false
-        isKeepPlaying.value = true 
+        isKeepPlaying.value = true
     }
 
     return {

@@ -2,7 +2,7 @@
 import type { StatItem } from '../types/2048';
 
 defineProps<{
-    item:StatItem
+    item: StatItem
 }>()
 </script>
 
@@ -20,7 +20,7 @@ defineProps<{
 
 <style scoped>
 .stat-item {
-    flex: 1; 
+    flex: 1;
     max-width: 120px;
     display: flex;
     flex-direction: column;

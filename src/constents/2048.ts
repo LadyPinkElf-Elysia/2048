@@ -7,10 +7,10 @@ export const DIRECTION = {
 
 export const gen_2_p = 0.9
 
-export const PAGES={
-    Config:'config',
-    Game:'game'
-}as const
+export const PAGES = {
+    Config: 'config',
+    Game: 'game'
+} as const
 
 export const ROW_OPTIONS = Array.from({ length: 7 }, (_, i) => i + 3)
 export const COL_OPTIONS = Array.from({ length: 7 }, (_, i) => i + 3)

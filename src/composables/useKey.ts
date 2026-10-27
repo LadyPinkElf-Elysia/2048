@@ -36,7 +36,7 @@ export const useKey = (handleMove: (direction: Direction) => void, target: Targe
             keys.push(mainKey)
         }
 
-        return keys.join('+') 
+        return keys.join('+')
     }
 
     const handleKeydown: EventListener = (e): void => {

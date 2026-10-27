@@ -14,7 +14,7 @@ import { useTooltip } from '../composables/useTooltip.ts';
 const store = use2048()
 const timer = useTimer()
 
-const boardRef = ref<HTMLElement | null>(null) 
+const boardRef = ref<HTMLElement | null>(null)
 const keyboardRef = ref(window)
 
 useGameStatus(store, timer)
@@ -48,7 +48,7 @@ const statItems = computed<StatItem[]>(() => [
     { label: '分数', value: store.score, icon: Trophy }
 ])
 
-const {canHover}=useTooltip()
+const { canHover } = useTooltip()
 
 </script>
 
@@ -61,14 +61,14 @@ const {canHover}=useTooltip()
         </div>
 
         <div class="action-bar-wrapper">
-            <ActionBar :can-hover  :actions="actions" />
+            <ActionBar :can-hover :actions="actions" />
         </div>
 
         <div class="board-wrapper" ref="boardRef">
             <Board :form="store.gameForm" :m="store.matrix"></Board>
         </div>
 
-        <DirectionPad :can-hover  @move="handleMove" :active-dir></DirectionPad>
+        <DirectionPad :can-hover @move="handleMove" :active-dir></DirectionPad>
     </div>
 </template>
 

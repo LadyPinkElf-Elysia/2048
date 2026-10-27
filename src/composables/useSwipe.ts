@@ -39,7 +39,7 @@ export const useSwipe = (handleMove: (direction: Direction) => void, target: Ref
     ]
 
     onMounted(() => {
-        const el = target.value as HTMLElement 
+        const el = target.value as HTMLElement
         if (!el) return
         listeners.forEach((item) => {
             el.addEventListener(item.type, item.handler, item.options)
@@ -47,7 +47,7 @@ export const useSwipe = (handleMove: (direction: Direction) => void, target: Ref
     })
 
     onBeforeUnmount(() => {
-        const el = target.value as HTMLElement 
+        const el = target.value as HTMLElement
         if (!el) return
         listeners.forEach((item) => {
             el.removeEventListener(item.type, item.handler, item.options)

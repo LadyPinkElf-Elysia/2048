@@ -1,7 +1,7 @@
 import { DIRECTION } from "../constents/2048"
 import type { Direction, Matrix } from "../types/2048"
 
-export const moveLogic = (matrix: Matrix, direction: Direction,onMerge?: (mergedValue: number) => void): boolean => {
+export const moveLogic = (matrix: Matrix, direction: Direction, onMerge?: (mergedValue: number) => void): boolean => {
     const rows = matrix.length      //行数
     const cols = matrix[0].length   //列数
     let moved = false               //是否有效移动
@@ -20,7 +20,7 @@ export const moveLogic = (matrix: Matrix, direction: Direction,onMerge?: (merged
     /**下一个非零的，因为0对结果无影响，所以要对结果有影响必是非零的数字导致的，所以找非零数字的位置和值*/
     const _nextNotZero = (r: number, c: number): [row: number, col: number, value: number] | null => {
         let [next_r, next_c] = nexts[direction](r, c)
-        if (!_inRange(next_r, next_c)) return null
+
         while (_inRange(next_r, next_c)) {
             const next_v = matrix[next_r][next_c]
             if (next_v !== 0) {

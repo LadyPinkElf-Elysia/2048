@@ -4,7 +4,7 @@ export const useBoardStyle = () => {
         const exponent = Math.log2(val)
         if (val === 2) return { background: '#eee4da', color: '#776e65' }
         if (val === 4) return { background: '#ede0c8', color: '#776e65' }
-        
+
         const hue = 30 + (exponent - 3) * 25
         return {
             background: `hsl(${hue}, 70%, 55%)`,

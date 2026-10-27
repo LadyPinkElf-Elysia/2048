@@ -7,7 +7,7 @@ defineProps<{
     content: string
     placement?: 'top' | 'bottom' | 'left' | 'right'
     showAfter?: number
-    canHover:boolean
+    canHover: boolean
 }>()
 
 </script>

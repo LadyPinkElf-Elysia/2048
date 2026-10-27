@@ -3,7 +3,7 @@ import type { DIRECTION } from "../constents/2048"
 
 export type Direction = typeof DIRECTION[keyof typeof DIRECTION]
 
-export type Matrix=number[][]
+export type Matrix = number[][]
 
 export type Position = [r: number, c: number]
 
@@ -16,7 +16,7 @@ export interface GameForm {
     r: number,
     c: number,
     n: number,
-    target:number
+    target: number
 }
 
 export interface ActionItem {
@@ -25,14 +25,14 @@ export interface ActionItem {
     onClick: () => void
     type?: 'primary' | 'success' | 'warning' | 'info' | 'danger' | 'default'
     icon?: any
-    disabled?:boolean
+    disabled?: boolean
     shortcut?: string
 }
 
-export interface StatItem{
-    label:string
-    value:string|number
-    icon?:any
+export interface StatItem {
+    label: string
+    value: string | number
+    icon?: any
 }
 
 export type TargetType = Ref<Window | HTMLElement | null>
