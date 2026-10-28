@@ -16,8 +16,16 @@ export const useBoardStyle = () => {
     const getFontScale = (val: number) => {
         if (val === 0) return '100%'
         const len = val.toString().length
-        return `${Math.max(25, 200 / len)}%`
+        
+        // 🔑 位数越高，比例缩小得越平滑
+        if (len === 1) return '100%' // 2, 4, 8：占格子 50% (0.5 * 100%)
+        if (len === 2) return '80%'  // 16, 32...：占格子 40% (0.5 * 80%)
+        if (len === 3) return '60%'  // 128, 256..：占格子 30% (0.5 * 60%)
+        if (len === 4) return '45%'  // 1024, 2048：占格子 22.5% (0.5 * 45%)
+        
+        return '35%'                 // 更大的数（如 4096+），避免溢出
     }
+
 
     return { getCellStyle, getFontScale }
 }

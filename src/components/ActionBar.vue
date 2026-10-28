@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useCssModule } from 'vue';
 import type { ActionItem } from '../types/2048';
 
 defineProps<{
@@ -6,13 +7,14 @@ defineProps<{
     canHover: boolean
 }>()
 
+const actionBarStyles = useCssModule('actionBarStyles');
 </script>
 
 <template>
-    <div class="action-bar">
-        <div v-for="item in actions" :key="item.key" class="btn-wrapper">
+    <div :class="actionBarStyles.actionBar">
+        <div v-for="item in actions" :key="item.key" :class="actionBarStyles.btnWrapper">
             <HoverTooltip :can-hover :content="item.shortcut ? `${item.label} (${item.shortcut})` : item.label">
-                <el-button class="btn" :type="item.type || 'default'" @click="item.onClick" :disabled="item.disabled"
+                <el-button :class="actionBarStyles.btn" :type="item.type || 'default'" @click="item.onClick" :disabled="item.disabled"
                     plain>
                     <el-icon v-if="item.icon">
                         <component :is="item.icon"></component>
@@ -24,8 +26,8 @@ defineProps<{
     </div>
 </template>
 
-<style scoped>
-.action-bar {
+<style module="actionBarStyles">
+.actionBar {
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
@@ -33,7 +35,7 @@ defineProps<{
     width: 100%;
 }
 
-.btn-wrapper {
+.btnWrapper {
     flex: 1;
     display: flex;
     min-width: 0;

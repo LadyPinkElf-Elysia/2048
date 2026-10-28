@@ -1,13 +1,23 @@
 <script setup lang="ts">
+import { useCssModule } from 'vue';
+
+// 🔑 模块名与组件名关联
+const appStyles = useCssModule('appStyles');
 </script>
 
 <template>
-    <div class="app-wrapper">
+    <!-- 🔑 使用模块化类名 -->
+    <div :class="appStyles.appWrapper">
         <RouterView></RouterView>
     </div>
 </template>
 
 <style>
+/* 
+  🔑 全局样式（保持不动）
+  html、body、#app 是原生标签/ID，不能模块化。
+  page-card 和 title 被子组件共用，所以也留在全局。
+*/
 html,
 body {
     margin: 0;
@@ -26,14 +36,6 @@ body {
     justify-content: center;
     align-items: center;
     background-color: #ece9e1;
-}
-
-.app-wrapper {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    padding: 12px;
-    box-sizing: border-box;
 }
 
 .page-card {
@@ -56,5 +58,16 @@ body {
     color: #776e65;
     letter-spacing: 2px;
     text-align: center;
+}
+</style>
+
+<!-- 🔑 局部的 CSS Modules -->
+<style module="appStyles">
+.appWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 12px;
+    box-sizing: border-box;
 }
 </style>

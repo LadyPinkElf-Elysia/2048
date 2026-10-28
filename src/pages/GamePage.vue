@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, useCssModule } from 'vue';
 import { PAGES } from '../constents/2048.ts';
 import router from '../router/index.ts';
 import { use2048 } from '../stores/use2048.ts';
@@ -11,6 +11,7 @@ import { useGameStatus } from '../composables/useGameStatus.ts';
 import { useGameControl } from '../composables/useGameControl.ts';
 import { useTooltip } from '../composables/useTooltip.ts';
 
+const gamePageStyles = useCssModule('gamePageStyles');
 const store = use2048()
 const timer = useTimer()
 
@@ -32,7 +33,8 @@ const { activeDir, handleMove, handleReset } = useGameControl(
     },
     {
         canMove,
-        onMoveSuccess: () => timer.start()
+        onMoveSuccess: () => timer.start(),
+        highlightDuration: import.meta.env.DEV ? 0 : 50
     }
 )
 
@@ -49,45 +51,44 @@ const statItems = computed<StatItem[]>(() => [
 ])
 
 const { canHover } = useTooltip()
-
 </script>
 
 <template>
     <div class="page-card">
         <h2 class="title">2048</h2>
 
-        <div class="stats-board">
+        <div :class="gamePageStyles.statsBoard">
             <StatItem v-for="item in statItems" :key="item.label" :item="item" />
         </div>
 
-        <div class="action-bar-wrapper">
+        <div :class="gamePageStyles.actionBarWrapper">
             <ActionBar :can-hover :actions="actions" />
         </div>
 
-        <div class="board-wrapper" ref="boardRef">
-            <Board :form="store.gameForm" :m="store.matrix"></Board>
+        <div :class="gamePageStyles.boardWrapper" ref="boardRef">
+            <Board :form="store.gameForm" :m="store.matrix" :direction="activeDir"></Board>
         </div>
 
         <DirectionPad :can-hover @move="handleMove" :active-dir></DirectionPad>
     </div>
 </template>
 
-<style scoped>
-.stats-board {
+<style module="gamePageStyles">
+.statsBoard {
     display: flex;
     justify-content: center;
     gap: 16px;
     width: 100%;
 }
 
-.action-bar-wrapper {
+.actionBarWrapper {
     margin: 8px 0;
     display: flex;
     justify-content: center;
     width: 100%;
 }
 
-.board-wrapper {
+.boardWrapper {
     width: 100%;
     margin: 8px 0;
     display: flex;

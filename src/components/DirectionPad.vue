@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useCssModule } from 'vue';
 import { ElIcon } from 'element-plus';
 import { Back, Bottom, Right, Top } from '@element-plus/icons-vue';
 import type { Direction } from '../types/2048';
@@ -11,6 +12,8 @@ const props = defineProps<{
 const emit = defineEmits<{
     move: [direction: Direction]
 }>()
+
+const directionPadStyles = useCssModule('directionPadStyles');
 
 const btns = {
     'up': { icon: Top, hint: '向上 (↑ / W)' },
@@ -25,10 +28,10 @@ const handleMove = (dir: Direction) => {
 </script>
 
 <template>
-    <div class="direction-pad">
+    <div :class="directionPadStyles.directionPad">
         <template v-for="(item, dir) in btns" :key="dir">
             <HoverTooltip :can-hover :content="item.hint">
-                <button :class="['btn', dir, { 'is-pressed': activeDir === dir }]"
+                <button :class="[directionPadStyles.btn, directionPadStyles[dir], { [directionPadStyles.isPressed]: activeDir === dir }]"
                     @click="handleMove(dir as Direction)">
                     <el-icon>
                         <component :is="item.icon"></component>
@@ -39,8 +42,8 @@ const handleMove = (dir: Direction) => {
     </div>
 </template>
 
-<style scoped>
-.direction-pad {
+<style module="directionPadStyles">
+.directionPad {
     display: grid;
     grid-template-columns: repeat(3, 60px);
     grid-template-rows: repeat(3, 60px);
@@ -72,26 +75,15 @@ const handleMove = (dir: Direction) => {
 }
 
 .btn:active,
-.btn.is-pressed {
+.isPressed {
     background-color: #8f7a66;
     color: #f9f6f2;
     transform: scale(0.92);
     box-shadow: none;
 }
 
-.up {
-    grid-area: 1/2/2/3;
-}
-
-.down {
-    grid-area: 3/2/4/3;
-}
-
-.left {
-    grid-area: 2/1/3/2;
-}
-
-.right {
-    grid-area: 2/3/3/4;
-}
+.up { grid-area: 1/2/2/3; }
+.down { grid-area: 3/2/4/3; }
+.left { grid-area: 2/1/3/2; }
+.right { grid-area: 2/3/3/4; }
 </style>

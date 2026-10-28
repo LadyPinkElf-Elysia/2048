@@ -7,6 +7,12 @@ export const DIRECTION = {
 
 export const gen_2_p = 0.9
 
+export const MAX_SNAPSHOTS = 100;
+
+export const TILE_2 = 2
+export const TILE_4 = 4
+export const PROD_DEBOUNCE_MS = 50
+
 export const PAGES = {
     Config: 'config',
     Game: 'game'

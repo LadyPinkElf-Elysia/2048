@@ -1,25 +1,28 @@
 <script setup lang="ts">
+import { useCssModule } from 'vue';
 import type { StatItem } from '../types/2048';
 
 defineProps<{
     item: StatItem
 }>()
+
+const statItemStyles = useCssModule('statItemStyles');
 </script>
 
 <template>
-    <div class="stat-item">
-        <span class="label">{{ item.label }}</span>
-        <div class="value-wrapper">
-            <el-icon v-if="item.icon" class="icon">
+    <div :class="statItemStyles.statItem">
+        <span :class="statItemStyles.label">{{ item.label }}</span>
+        <div :class="statItemStyles.valueWrapper">
+            <el-icon v-if="item.icon" :class="statItemStyles.icon">
                 <component :is="item.icon" />
             </el-icon>
-            <span class="value">{{ item.value }}</span>
+            <span :class="statItemStyles.value">{{ item.value }}</span>
         </div>
     </div>
 </template>
 
-<style scoped>
-.stat-item {
+<style module="statItemStyles">
+.statItem {
     flex: 1;
     max-width: 120px;
     display: flex;
@@ -41,7 +44,7 @@ defineProps<{
     letter-spacing: 1px;
 }
 
-.value-wrapper {
+.valueWrapper {
     display: flex;
     align-items: center;
     gap: 4px;

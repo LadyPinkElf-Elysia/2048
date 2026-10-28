@@ -1,6 +1,6 @@
 import { computed, ref, toRaw } from "vue"
 import { defineStore } from "pinia"
-import { gen_2_p } from "../constents/2048"
+import { gen_2_p, MAX_SNAPSHOTS, PROD_DEBOUNCE_MS, TILE_2, TILE_4 } from "../constents/2048"
 import type { Matrix, SnapShot, GameForm, Position, Direction } from "../types/2048"
 import { moveLogic } from "../utils/logic"
 
@@ -17,10 +17,10 @@ export const use2048 = defineStore('use2048', () => {
     const currentIndex = ref(-1)
     const gameForm = ref<GameForm>(createDefaultForm())
 
-    const hasWon = ref(false)          // 用来触发弹窗
-    const isKeepPlaying = ref(false)   // 记录玩家是否选择了“继续挑战”
+    const hasWon = ref(false)          
+    const isKeepPlaying = ref(false)   
 
-    let isLocked = false
+    let lastMoveTime = 0
 
     /**收集当前空格子*/
     const emptyCells = computed<Position[]>(() => {
@@ -48,7 +48,6 @@ export const use2048 = defineStore('use2048', () => {
                 if (r < rows - 1 && v === matrix.value[r + 1][c]) return false
             }
         }
-
         return true
     })
 
@@ -61,18 +60,20 @@ export const use2048 = defineStore('use2048', () => {
         if (cells.length === 0) return
 
         const idx = Math.floor(rng1() * cells.length)
-
         const [r, c] = cells[idx]
 
-        matrix.value[r][c] = rng2() < gen_2_p ? 2 : 4
+        matrix.value[r][c] = rng2() < gen_2_p ? TILE_2 : TILE_4
     }
 
     const move = (direction: Direction): boolean => {
-        if (isLocked) return false
+        const now = Date.now()
+        // 🔑 开发环境 0ms，生产环境防抖 50ms
+        const debounceTime = import.meta.env.DEV ? 0 : PROD_DEBOUNCE_MS
+        
+        if (now - lastMoveTime < debounceTime) return false
         if (matrix.value.length === 0 || isLost.value || hasWon.value) return false
 
-        isLocked = true
-        setTimeout(() => { isLocked = false }, 50)
+        lastMoveTime = now
 
         const moved = moveLogic(matrix.value, direction, (val) => { score.value += val })
 
@@ -90,11 +91,18 @@ export const use2048 = defineStore('use2048', () => {
     }
 
     const save = (): void => {
+        // 如果在历史记录中间产生了新动作，截断后面的记录
         if (currentIndex.value < snapShot.value.length - 1) {
             snapShot.value.splice(currentIndex.value + 1)
         }
+        
         snapShot.value.push({ matrix: copy(matrix.value), score: score.value })
-        currentIndex.value++
+        
+        if (snapShot.value.length > MAX_SNAPSHOTS) {
+            snapShot.value.shift() 
+        } else {
+            currentIndex.value++
+        }
     }
 
     const goto = (n: number): void => {

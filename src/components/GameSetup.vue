@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useCssModule } from 'vue';
 import { ElForm, ElFormItem, ElSelect, ElOption } from 'element-plus';
 import type { GameForm } from '../types/2048';
 import { createDefaultForm } from '../stores/use2048';
@@ -9,6 +10,7 @@ const emit = defineEmits<{
 }>()
 
 const form = defineModel<GameForm>('form', { default: () => createDefaultForm() })
+const gameSetupStyles = useCssModule('gameSetupStyles');
 
 const handleStart = () => {
     emit('start')
@@ -20,51 +22,50 @@ const formConfig = [
     { label: '初始个数(n)', key: 'n' as const, options: N_OPTIONS, suffix: '个', placeholder: '请选择个数' },
     { label: '目标数字(t)', key: 'target' as const, options: TARGET_OPTIONS, suffix: '', placeholder: '请选择目标' }
 ]
-
 </script>
 
 <template>
-    <el-form label-width="100px" label-position="left" class="game-setup-form">
+    <el-form label-width="100px" label-position="left" :class="gameSetupStyles.gameSetupForm">
         <el-form-item v-for="item in formConfig" :key="item.key" :label="item.label">
-            <el-select v-model="form[item.key]" :placeholder="item.placeholder" class="custom-select">
+            <el-select v-model="form[item.key]" :placeholder="item.placeholder" :class="gameSetupStyles.customSelect">
                 <el-option v-for="n in item.options" :key="n" :label="item.suffix ? `${n}${item.suffix}` : `${n}`"
                     :value="n" />
             </el-select>
         </el-form-item>
     </el-form>
-    <div class="submit-wrapper">
-        <button class="btn-start" @click="handleStart">
+    <div :class="gameSetupStyles.submitWrapper">
+        <button :class="gameSetupStyles.btnStart" @click="handleStart">
             开始游戏
         </button>
     </div>
 </template>
 
-<style scoped>
-.game-setup-form {
+<style module="gameSetupStyles">
+.gameSetupForm {
     width: 100%;
 }
 
-.custom-select {
+.customSelect {
     width: 100%;
 }
 
-:deep(.el-select__wrapper) {
+.gameSetupForm :deep(.el-select__wrapper) {
     border-radius: 8px;
     background-color: #fcfbf9;
     box-shadow: 0 0 0 1px #cdc1b4 inset;
 }
 
-:deep(.el-select__wrapper.is-focused) {
+.gameSetupForm :deep(.el-select__wrapper.is-focused) {
     box-shadow: 0 0 0 1px #8f7a66 inset;
 }
 
-.submit-wrapper {
+.submitWrapper {
     display: flex;
     justify-content: center;
     margin-top: 36px;
 }
 
-.btn-start {
+.btnStart {
     width: 100%;
     background: #8f7a66;
     color: #f9f6f2;
@@ -79,12 +80,12 @@ const formConfig = [
     letter-spacing: 1px;
 }
 
-.btn-start:hover {
+.btnStart:hover {
     background: #9f8b77;
     transform: translateY(-1px);
 }
 
-.btn-start:active {
+.btnStart:active {
     transform: scale(0.96) translateY(0);
     box-shadow: 0 2px 5px rgba(143, 122, 102, 0.3);
 }
