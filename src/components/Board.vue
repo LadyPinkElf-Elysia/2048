@@ -4,7 +4,6 @@ import type { GameForm, Matrix, Direction } from '../types/2048';
 import { useBoardStyle } from '../composables/useBoardStyle';
 import { useTileAnimation } from '../composables/useTileAnimation';
 
-// 🔑 接收 direction
 const props = defineProps<{
     form: GameForm
     m: Matrix
@@ -18,8 +17,6 @@ const cols = computed(() => props.form.c);
 const cellW = computed(() => `calc(min(100vw, 560px) / ${props.form.c + 1})`);
 
 const { getCellStyle, getFontScale } = useBoardStyle()
-
-// 🔑 将 direction 传进去
 const { tiles } = useTileAnimation(
     computed(() => props.m), 
     computed(() => props.direction)
@@ -30,24 +27,25 @@ const bgCells = computed(() => Array.from({ length: rows.value * cols.value }))
 
 <template>
     <div :class="boardStyles.board">
-        <!-- 1. 底层静态背景网格 -->
         <div v-for="(_, i) in bgCells" :key="`bg-${i}`" :class="boardStyles.bgCell"></div>
 
-        <!-- 2. 顶层动态方块容器（同样使用 Grid 布局） -->
         <TransitionGroup name="tile" tag="div" :class="boardStyles.tileContainer">
+            <!-- 🔑 外层：通过 Grid 原生定位，杜绝任何坐标计算 -->
             <div
                 v-for="tile in tiles"
                 :key="tile.id"
-                :class="boardStyles.cell"
+                :class="boardStyles.cellWrapper"
                 :style="{
-                    ...getCellStyle(tile.val),
                     gridRow: tile.r + 1,
                     gridColumn: tile.c + 1
                 }"
             >
-                <span :style="{ fontSize: getFontScale(tile.val) }">
-                    {{ tile.val }}
-                </span>
+                <!-- 🔑 内层：负责颜色和动画 -->
+                <div :class="boardStyles.cell" :style="getCellStyle(tile.val)">
+                    <span :style="{ fontSize: getFontScale(tile.val) }">
+                        {{ tile.val }}
+                    </span>
+                </div>
             </div>
         </TransitionGroup>
     </div>
@@ -75,19 +73,28 @@ const bgCells = computed(() => Array.from({ length: rows.value * cols.value }))
     height: 100%;
 }
 
+/* 🔑 覆盖层也用一模一样的 Grid，完美贴合背景 */
 .tileContainer {
     position: absolute;
-    inset: 0;
-    padding: calc(v-bind(cellW) * 0.1);
+    top: calc(v-bind(cellW) * 0.1);
+    left: calc(v-bind(cellW) * 0.1);
+    right: calc(v-bind(cellW) * 0.1);
+    bottom: calc(v-bind(cellW) * 0.1);
     display: grid;
     grid-template-columns: repeat(v-bind(cols), 1fr);
     grid-template-rows: repeat(v-bind(rows), 1fr);
     gap: calc(v-bind(cellW) * 0.1);
     pointer-events: none;
-    box-sizing: border-box;
+}
+
+.cellWrapper {
+    width: 100%;
+    height: 100%;
 }
 
 .cell {
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -97,7 +104,6 @@ const bgCells = computed(() => Array.from({ length: rows.value * cols.value }))
     line-height: 1;
     font-size: calc(v-bind(cellW) * 0.5);
     overflow: hidden;
-    /* 🔑 移除 transition，完全交由 Vue 的 .tile-move 处理 */
 }
 
 .cell span {
@@ -106,30 +112,38 @@ const bgCells = computed(() => Array.from({ length: rows.value * cols.value }))
     white-space: nowrap;
 }
 
-/* 移动动画 */
+/* ==========================================
+   🔑 极致动画（物理隔绝）
+   ========================================== */
+
+/* 1. 只有老方块在 Grid 中改变位置时，Vue 才会赋予它 FLIP 移动动画 */
 .tileContainer :global(.tile-move) {
     transition: transform 0.15s cubic-bezier(0.2, 0, 0.2, 1);
     z-index: 8;
 }
 
-/* 生成动画（纯原地缩放） */
+/* 2. 新元素进入：直接锁死外层过渡，纯粹在内层放大 */
 .tileContainer :global(.tile-enter-active) {
-    transition: opacity 0.2s, transform 0.15s;
-    z-index: 10;
+    transition: none !important;
 }
-.tileContainer :global(.tile-enter-from) {
-    opacity: 0;
-    /* 🔑 强制重置 transform 的位移，确保只原地放大，没有任何漂移 */
-    transform: scale(0.5) translate(0, 0) !important; 
+.tileContainer :global(.tile-enter-active) .cell {
+    animation: pop-in 0.2s cubic-bezier(0.2, 0, 0.2, 1) forwards;
 }
 
-/* 合并消失动画 */
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    80% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* 3. 合并消失（纯内层） */
 .tileContainer :global(.tile-leave-active) {
-    transition: opacity 0.15s, transform 0.15s;
+    transition: opacity 0.15s ease-in-out;
     z-index: 9;
 }
-.tileContainer :global(.tile-leave-to) {
+.tileContainer :global(.tile-leave-to) .cell {
     opacity: 0;
-    transform: scale(0.8) translate(0, 0) !important;
+    transform: scale(0.8);
+    transition: all 0.15s ease-in-out;
 }
 </style>
