@@ -83,8 +83,8 @@ export const moveLogic=(matrix:Matrix,direction:Direction):{moved:boolean,moveSc
 
     const limit = (direction === 'up' || direction === 'down') ? cols : rows
 
-    for (let i = 0; i < limit; i++) {
-        const [r, c] = starts[direction](i)
+    for (let idx = 0; idx < limit; idx++) {
+        const [r, c] = starts[direction](idx)
         
         const { groupMoved, groupScore } = moveGroup(r, c, direction, matrix)
         
