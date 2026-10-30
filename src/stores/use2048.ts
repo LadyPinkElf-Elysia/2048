@@ -1,8 +1,8 @@
 import { computed, ref, toRaw } from "vue"
 import { defineStore } from "pinia"
-import { gen_2_p, MAX_SNAPSHOTS, PROD_DEBOUNCE_MS, TILE_2, TILE_4 } from "../constents/2048"
-import type { Matrix, SnapShot, GameForm, Position, Direction } from "../types/2048"
-import { moveLogic } from "../utils/logic"
+import { gen_2_p, TILE_2, TILE_4, PROD_DEBOUNCE_MS, MAX_SNAPSHOTS } from "@/constents/2048"
+import type { Matrix, GameForm, SnapShot, Position, Direction } from "@/types/2048"
+import { moveLogic } from "@/utils/logic"
 
 const createZeroMatrix = (r: number, c: number): Matrix => Array.from({ length: r }, () => Array(c).fill(0))
 
@@ -17,8 +17,8 @@ export const use2048 = defineStore('use2048', () => {
     const currentIndex = ref(-1)
     const gameForm = ref<GameForm>(createDefaultForm())
 
-    const hasWon = ref(false)          
-    const isKeepPlaying = ref(false)   
+    const hasWon = ref(false)
+    const isKeepPlaying = ref(false)
 
     let lastMoveTime = 0
 
@@ -75,11 +75,11 @@ export const use2048 = defineStore('use2048', () => {
 
         if (matrix.value.length === 0 || isLost.value || hasWon.value) return false
 
-        const {moved,moveScore} = moveLogic(matrix.value, direction)
+        const { moved, moveScore } = moveLogic(matrix.value, direction)
 
         if (moved) {
-            lastMoveTime = Date.now() 
-            score.value+=moveScore
+            lastMoveTime = Date.now()
+            score.value += moveScore
             addTile()
             save()
             if (!isKeepPlaying.value) {
@@ -93,15 +93,14 @@ export const use2048 = defineStore('use2048', () => {
     }
 
     const save = (): void => {
-        // 如果在历史记录中间产生了新动作，截断后面的记录
         if (currentIndex.value < snapShot.value.length - 1) {
             snapShot.value.splice(currentIndex.value + 1)
         }
-        
+
         snapShot.value.push({ matrix: copy(matrix.value), score: score.value })
-        
+
         if (snapShot.value.length > MAX_SNAPSHOTS) {
-            snapShot.value.shift() 
+            snapShot.value.shift()
         } else {
             currentIndex.value++
         }

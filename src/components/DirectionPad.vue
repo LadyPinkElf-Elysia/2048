@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { useCssModule } from 'vue';
-import { ElIcon } from 'element-plus';
 import { Back, Bottom, Right, Top } from '@element-plus/icons-vue';
-import type { Direction } from '../types/2048';
+import type { Direction } from '@/types/2048';
 
 const props = defineProps<{
     activeDir: Direction | null

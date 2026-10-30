@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { useCssModule } from 'vue';
-import { ElForm, ElFormItem, ElSelect, ElOption } from 'element-plus';
-import type { GameForm } from '../types/2048';
-import { createDefaultForm } from '../stores/use2048';
-import { ROW_OPTIONS, COL_OPTIONS, N_OPTIONS, TARGET_OPTIONS } from '../constents/2048';
+import type { GameForm } from '@/types/2048';
+import { createDefaultForm } from '@/stores/use2048';
+import { ROW_OPTIONS, COL_OPTIONS, N_OPTIONS, TARGET_OPTIONS } from '@/constents/2048';
 
 const emit = defineEmits<{
     start: []

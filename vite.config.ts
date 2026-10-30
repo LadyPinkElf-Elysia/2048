@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { fileURLToPath,URL } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -17,4 +18,10 @@ export default defineConfig({
       dts: 'src/components.d.ts',
     }),
   ],
+  base: './',
+    resolve: {
+      alias: {
+        "@": fileURLToPath(new URL('./src',import.meta.url))
+      }
+    },
 })

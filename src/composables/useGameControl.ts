@@ -1,7 +1,7 @@
 import { ref, type Ref } from 'vue'
+import type { Direction, GameControlActions, GameControlOptions, TargetType } from '@/types/2048'
 import { useKey } from './useKey'
 import { useSwipe } from './useSwipe'
-import type { Direction, GameControlActions, GameControlOptions, TargetType } from '../types/2048'
 
 export const useGameControl = (
     boardRef: TargetType,

@@ -11,6 +11,7 @@ export const MAX_SNAPSHOTS = 100;
 
 export const TILE_2 = 2
 export const TILE_4 = 4
+
 export const PROD_DEBOUNCE_MS = 50
 
 export const PAGES = {

@@ -1,9 +1,9 @@
 import { watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessageBox } from 'element-plus'
-import { PAGES } from '../constents/2048'
-import type { use2048 } from '../stores/use2048'
+import { PAGES } from '@/constents/2048'
+import type { use2048 } from '@/stores/use2048'
 import type { useTimer } from './useTimer'
+import { ElMessageBox } from 'element-plus'
 
 export const useGameStatus = (
     store: ReturnType<typeof use2048>,

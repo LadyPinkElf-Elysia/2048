@@ -1,6 +1,6 @@
+import { PAGES } from "@/constents/2048.ts";
+import { use2048 } from "@/stores/use2048.ts";
 import { createRouter, createWebHashHistory } from "vue-router";
-import { PAGES } from "../constents/2048.ts";
-import { use2048 } from "../stores/use2048.ts";
 
 const router = createRouter({
     history: createWebHashHistory(),

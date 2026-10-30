@@ -1,12 +1,5 @@
 import { ref, watch, type Ref } from 'vue'
-import type { Matrix, Direction } from '../types/2048'
-
-export interface Tile {
-    id: number
-    val: number
-    r: number
-    c: number
-}
+import type { Matrix, Direction, Tile } from '@/types/2048'
 
 export const useTileAnimation = (sourceMatrix: Ref<Matrix>, direction: Ref<Direction | null>) => {
     let nextId = 0

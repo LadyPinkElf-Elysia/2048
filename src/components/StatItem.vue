@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCssModule } from 'vue';
-import type { StatItem } from '../types/2048';
+import type { StatItem } from '@/types/2048';
 
 defineProps<{
     item: StatItem

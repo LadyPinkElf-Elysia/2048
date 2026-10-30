@@ -1,5 +1,5 @@
+import type { DIRECTION } from "@/constents/2048"
 import type { Ref } from "vue"
-import type { DIRECTION } from "../constents/2048"
 
 export type Direction=keyof typeof DIRECTION
 
@@ -63,4 +63,11 @@ export interface GameControlOptions {
     highlightDuration?: number // 高亮时间，默认 50
     resetDebounce?: number     // 防抖时间，默认 100
     swipeThreshold?: number    // 滑动阈值，默认 30
+}
+
+export interface Tile {
+    id: number
+    val: number
+    r: number
+    c: number
 }

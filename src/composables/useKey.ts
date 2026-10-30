@@ -1,5 +1,5 @@
 import { onBeforeUnmount, onMounted } from "vue"
-import type { Direction, EventListenerItem, ShortcutMap, TargetType } from "../types/2048"
+import type { Direction, EventListenerItem, ShortcutMap, TargetType } from "@/types/2048"
 
 export const isMac = /Mac|iPod|iPhone|iPad/.test(navigator.userAgent)
 

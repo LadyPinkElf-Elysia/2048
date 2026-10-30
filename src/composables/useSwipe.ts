@@ -1,5 +1,5 @@
 import { onBeforeUnmount, onMounted, type Ref } from "vue";
-import type { Direction, EventListenerItem, SwipeOptions } from "../types/2048";
+import type { Direction, EventListenerItem, SwipeOptions } from "@/types/2048";
 
 export const useSwipe = (handleMove: (direction: Direction) => void, target: Ref<HTMLElement | null>, options: SwipeOptions = {}) => {
     const { threshold = 30 } = options

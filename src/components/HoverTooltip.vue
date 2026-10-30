@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ElTooltip } from 'element-plus'
-
 defineOptions({ inheritAttrs: false })
 
 defineProps<{

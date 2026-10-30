@@ -1,4 +1,4 @@
-import type { Direction, Matrix } from "../types/2048"
+import type { Direction, Matrix } from "@/types/2048"
 
 const inRange = (r: number, c: number, matrix: Matrix) =>
     r >= 0 && r < matrix.length && c >= 0 && c < matrix[0].length
@@ -31,9 +31,9 @@ const nextNotZeroCell = (
 
 const moveGroup = (
     r: number, c: number, direction: Direction, matrix: Matrix
-): {groupMoved:boolean,groupScore:number} => {
-    let groupMoved=false
-    let groupScore=0
+): { groupMoved: boolean, groupScore: number } => {
+    let groupMoved = false
+    let groupScore = 0
     const [dr, dc] = nextMoveDelta[direction]
 
     while (inRange(r, c, matrix)) {
@@ -57,22 +57,22 @@ const moveGroup = (
             matrix[next_r][next_c] = 0
 
             groupMoved = true
-            groupScore+=matrix[r][c]
+            groupScore += matrix[r][c]
         }
 
-        r+=dr
-        c+=dc
+        r += dr
+        c += dc
     }
 
-    return {groupMoved,groupScore}
+    return { groupMoved, groupScore }
 }
 
-export const moveLogic=(matrix:Matrix,direction:Direction):{moved:boolean,moveScore:number}=>{
-    const rows=matrix.length
-    const cols=matrix[0].length
+export const moveLogic = (matrix: Matrix, direction: Direction): { moved: boolean, moveScore: number } => {
+    const rows = matrix.length
+    const cols = matrix[0].length
 
-    let moved=false
-    let moveScore=0
+    let moved = false
+    let moveScore = 0
 
     const starts = {
         up: (i: number): [r: number, c: number] => [0, i],
@@ -85,9 +85,9 @@ export const moveLogic=(matrix:Matrix,direction:Direction):{moved:boolean,moveSc
 
     for (let idx = 0; idx < limit; idx++) {
         const [r, c] = starts[direction](idx)
-        
+
         const { groupMoved, groupScore } = moveGroup(r, c, direction, matrix)
-        
+
         if (groupMoved) moved = true
         moveScore += groupScore
     }

@@ -17,7 +17,6 @@ declare module 'vue' {
     HoverTooltip: typeof import('./components/HoverTooltip.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Setting: typeof import('./components/Setting.vue')['default']
     StatItem: typeof import('./components/StatItem.vue')['default']
   }
 }

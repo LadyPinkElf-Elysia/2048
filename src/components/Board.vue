@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, useCssModule } from 'vue';
-import type { GameForm, Matrix, Direction } from '../types/2048';
-import { useBoardStyle } from '../composables/useBoardStyle';
-import { useTileAnimation } from '../composables/useTileAnimation';
+import type { GameForm, Matrix, Direction } from '@/types/2048';
+import { useBoardStyle } from '@/composables/useBoardStyle';
+import { useTileAnimation } from '@/composables/useTileAnimation';
 
 const props = defineProps<{
     form: GameForm
@@ -18,7 +18,7 @@ const cellW = computed(() => `calc(min(100vw, 560px) / ${props.form.c + 1})`);
 
 const { getCellStyle, getFontScale } = useBoardStyle()
 const { tiles } = useTileAnimation(
-    computed(() => props.m), 
+    computed(() => props.m),
     computed(() => props.direction)
 )
 
@@ -30,17 +30,10 @@ const bgCells = computed(() => Array.from({ length: rows.value * cols.value }))
         <div v-for="(_, i) in bgCells" :key="`bg-${i}`" :class="boardStyles.bgCell"></div>
 
         <TransitionGroup name="tile" tag="div" :class="boardStyles.tileContainer">
-            <!-- 🔑 外层：通过 Grid 原生定位，杜绝任何坐标计算 -->
-            <div
-                v-for="tile in tiles"
-                :key="tile.id"
-                :class="boardStyles.cellWrapper"
-                :style="{
-                    gridRow: tile.r + 1,
-                    gridColumn: tile.c + 1
-                }"
-            >
-                <!-- 🔑 内层：负责颜色和动画 -->
+            <div v-for="tile in tiles" :key="tile.id" :class="boardStyles.cellWrapper" :style="{
+                gridRow: tile.r + 1,
+                gridColumn: tile.c + 1
+            }">
                 <div :class="boardStyles.cell" :style="getCellStyle(tile.val)">
                     <span :style="{ fontSize: getFontScale(tile.val) }">
                         {{ tile.val }}
@@ -126,14 +119,26 @@ const bgCells = computed(() => Array.from({ length: rows.value * cols.value }))
 .tileContainer :global(.tile-enter-active) {
     transition: none !important;
 }
+
 .tileContainer :global(.tile-enter-active) .cell {
     animation: pop-in 0.2s cubic-bezier(0.2, 0, 0.2, 1) forwards;
 }
 
 @keyframes pop-in {
-    0% { transform: scale(0.5); opacity: 0; }
-    80% { transform: scale(1.1); opacity: 1; }
-    100% { transform: scale(1); opacity: 1; }
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    80% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 /* 3. 合并消失（纯内层） */
@@ -141,6 +146,7 @@ const bgCells = computed(() => Array.from({ length: rows.value * cols.value }))
     transition: opacity 0.15s ease-in-out;
     z-index: 9;
 }
+
 .tileContainer :global(.tile-leave-to) .cell {
     opacity: 0;
     transform: scale(0.8);

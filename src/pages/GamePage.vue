@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { computed, ref, useCssModule } from 'vue';
-import { PAGES } from '../constents/2048.ts';
-import router from '../router/index.ts';
-import { use2048 } from '../stores/use2048.ts';
-import type { ActionItem, StatItem } from '../types/2048.ts';
-import { useTimer } from '../composables/useTimer.ts';
+import router from '@/router/index.ts';
 import { Timer as TimerIcon, Trophy } from '@element-plus/icons-vue';
-import { formatShortcut } from '../composables/useKey.ts';
-import { useGameStatus } from '../composables/useGameStatus.ts';
-import { useGameControl } from '../composables/useGameControl.ts';
-import { useTooltip } from '../composables/useTooltip.ts';
+import { PAGES } from '@/constents/2048.ts';
+import { useGameControl } from '@/composables/useGameControl';
+import { useGameStatus } from '@/composables/useGameStatus';
+import { formatShortcut } from '@/composables/useKey';
+import { useTimer } from '@/composables/useTimer';
+import { useTooltip } from '@/composables/useTooltip';
+import { use2048 } from '@/stores/use2048';
+import type { ActionItem, StatItem } from '@/types/2048';
 
 const gamePageStyles = useCssModule('gamePageStyles');
 const store = use2048()
