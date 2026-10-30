@@ -65,23 +65,25 @@ export const use2048 = defineStore('use2048', () => {
         matrix.value[r][c] = rng2() < gen_2_p ? TILE_2 : TILE_4
     }
 
-    const move = (direction: Direction): boolean => {
-        const now = Date.now()
-        // 🔑 开发环境 0ms，生产环境防抖 50ms
+    const isThrottled = (): boolean => {
         const debounceTime = import.meta.env.DEV ? 0 : PROD_DEBOUNCE_MS
-        
-        if (now - lastMoveTime < debounceTime) return false
+        return Date.now() - lastMoveTime < debounceTime
+    }
+
+    const move = (direction: Direction): boolean => {
+        if (isThrottled()) return false
+
         if (matrix.value.length === 0 || isLost.value || hasWon.value) return false
 
-        lastMoveTime = now
-
-        const moved = moveLogic(matrix.value, direction, (val) => { score.value += val })
+        const {moved,moveScore} = moveLogic(matrix.value, direction)
 
         if (moved) {
+            lastMoveTime = Date.now() 
+            score.value+=moveScore
             addTile()
             save()
             if (!isKeepPlaying.value) {
-                const maxVal = Math.max(...matrix.value.flat())
+                const maxVal = matrix.value.flat().reduce((max, v) => Math.max(max, v), 0)
                 if (maxVal >= gameForm.value.target) {
                     hasWon.value = true
                 }
@@ -130,6 +132,8 @@ export const use2048 = defineStore('use2048', () => {
         currentIndex.value = -1
         hasWon.value = false
         isKeepPlaying.value = false
+        lastMoveTime = 0
+
         for (let i = 1; i <= gameForm.value.n; i++) {
             addTile()
         }

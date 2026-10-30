@@ -1,7 +1,7 @@
 import type { Ref } from "vue"
 import type { DIRECTION } from "../constents/2048"
 
-export type Direction = typeof DIRECTION[keyof typeof DIRECTION]
+export type Direction=keyof typeof DIRECTION
 
 export type Matrix = number[][]
 
@@ -49,7 +49,6 @@ export interface EventListenerItem<T extends string = string> {
     options?: AddEventListenerOptions | boolean
 }
 
-// 🌟 1. 纯粹的动作字典（全是函数）
 export interface GameControlActions {
     move: (dir: Direction) => boolean
     reset: () => void

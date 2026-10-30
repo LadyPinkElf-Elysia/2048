@@ -1,94 +1,79 @@
-import { DIRECTION } from "../constents/2048"
 import type { Direction, Matrix } from "../types/2048"
 
-export const moveLogic = (matrix: Matrix, direction: Direction, onMerge?: (mergedValue: number) => void): boolean => {
-    const rows = matrix.length      //行数
-    const cols = matrix[0].length   //列数
-    let moved = false               //是否有效移动
+const inRange = (r: number, c: number, matrix: Matrix) =>
+    r >= 0 && r < matrix.length && c >= 0 && c < matrix[0].length
 
-    /**方向向量，用来标识某一坐标给定方向的下一个位置*/
-    const nexts = {
-        up: (r: number, c: number): [next_r: number, next_c: number] => [r + 1, c],
-        down: (r: number, c: number): [next_r: number, next_c: number] => [r - 1, c],
-        left: (r: number, c: number): [next_r: number, next_c: number] => [r, c + 1],
-        right: (r: number, c: number): [next_r: number, next_c: number] => [r, c - 1],
-    }
+type MoveDelta = readonly [dr: number, dc: number]
 
-    /**坐标有无越界*/
-    const _inRange = (r: number, c: number) :boolean=> r >= 0 && r < rows && c >= 0 && c < cols
+const nextMoveDelta = {
+    "up": [1, 0] as MoveDelta,
+    "down": [-1, 0] as MoveDelta,
+    "left": [0, 1] as MoveDelta,
+    "right": [0, -1] as MoveDelta,
+} as const
 
-    /**下一个非零的，因为0对结果无影响，所以要对结果有影响必是非零的数字导致的，所以找非零数字的位置和值*/
-    const _nextNotZero = (r: number, c: number): [row: number, col: number, value: number] | null => {
-        let [next_r, next_c] = nexts[direction](r, c)
-
-        while (_inRange(next_r, next_c)) {
-            const next_v = matrix[next_r][next_c]
-            if (next_v !== 0) {
-                return [next_r, next_c, next_v]
-            }
-            [next_r, next_c] = nexts[direction](next_r, next_c)
-        }
-        return null
-    }
-
-    const _cal=(r:number,c:number)=>{
-        while(_inRange(r,c)){
-            const next=_nextNotZero(r,c)
-
-            if(!next) break
-
-            const [next_r,next_c,next_v]=next
-            const v=matrix[r][c]
-
-            if(v===0){
-                [matrix[r][c],matrix[next_r][next_c]]=[next_v,v]
-                moved=true
-                continue
-            }
-            else if(v===next_v){
-                matrix[r][c]*=2
-                matrix[next_r][next_c]=0
-                moved=true
-                onMerge?.(matrix[r][c])
-            }
-
-            [r,c]=nexts[direction](r,c)
+const nextNotZeroCell = (
+    r: number, c: number, direction: Direction, matrix: Matrix
+): [next_r: number, next_c: number, next_v: number] | null => {
+    const [dr, dc] = nextMoveDelta[direction]
+    for (
+        let next_r = r + dr, next_c = c + dc;
+        inRange(next_r, next_c, matrix);
+        next_r += dr, next_c += dc
+    ) {
+        const next_v = matrix[next_r][next_c]
+        if (next_v !== 0) {
+            return [next_r, next_c, next_v]
         }
     }
+    return null
+}
 
-    // /**递归函数，解决某一行，列*/
-    // const _cal = (r: number, c: number) => {
-    //     //如果找到的索引越界就说明找完了
-    //     if (!_inRange(r, c)) return
+const moveGroup = (
+    r: number, c: number, direction: Direction, matrix: Matrix
+): {groupMoved:boolean,groupScore:number} => {
+    let groupMoved=false
+    let groupScore=0
+    const [dr, dc] = nextMoveDelta[direction]
 
-    //     //找当前坐标下一个非零数字
-    //     const next = _nextNotZero(r, c)
-    //     if (!next) return
+    while (inRange(r, c, matrix)) {
+        const next = nextNotZeroCell(r, c, direction, matrix)
 
-    //     const [next_r, next_c, next_v] = next
-    //     const v = matrix[r][c]
-    //     //零的话交换值的位置，而且还可以合并值
-    //     if (v == 0) {
-    //         //元组交换
-    //         [matrix[r][c], matrix[next_r][next_c]] = [matrix[next_r][next_c], matrix[r][c]]
-    //         //标记
-    //         moved = true
-    //         //接下来还可以合并
-    //         _cal(r, c)
-    //     }
-    //     else if (v === next_v) {
-    //         matrix[r][c] *= 2
-    //         matrix[next_r][next_c] = 0
-    //         moved = true
-    //         onMerge?.(matrix[r][c])
-    //     }
+        if (!next) break
 
-    //     //解决当前位置，就开始解决下一个位置的（注意和下一个非零数字的位置有区别）
-    //     const [nr, nc] = nexts[direction](r, c)
-    //     _cal(nr, nc)
-    // }
+        const [next_r, next_c, next_v] = next
+        const v = matrix[r][c]
 
-    /**开始位置*/
+        if (v === 0) {
+            matrix[r][c] = next_v
+            matrix[next_r][next_c] = v
+
+            groupMoved = true
+
+            continue
+        }
+        else if (v === next_v) {
+            matrix[r][c] *= 2
+            matrix[next_r][next_c] = 0
+
+            groupMoved = true
+            groupScore+=matrix[r][c]
+        }
+
+        r+=dr
+        c+=dc
+    }
+
+    return {groupMoved,groupScore}
+}
+
+export const moveLogic=(matrix:Matrix,direction:Direction):{moved:boolean,moveScore:number}=>{
+    const rows=matrix.length
+    const cols=matrix[0].length
+
+    let moved=false
+    let moveScore=0
+
     const starts = {
         up: (i: number): [r: number, c: number] => [0, i],
         down: (i: number): [r: number, c: number] => [rows - 1, i],
@@ -96,12 +81,16 @@ export const moveLogic = (matrix: Matrix, direction: Direction, onMerge?: (merge
         right: (i: number): [r: number, c: number] => [i, cols - 1],
     }
 
-    const limit = (direction === DIRECTION.up || direction === DIRECTION.down) ? cols : rows
+    const limit = (direction === 'up' || direction === 'down') ? cols : rows
 
     for (let i = 0; i < limit; i++) {
         const [r, c] = starts[direction](i)
-        _cal(r, c)
+        
+        const { groupMoved, groupScore } = moveGroup(r, c, direction, matrix)
+        
+        if (groupMoved) moved = true
+        moveScore += groupScore
     }
 
-    return moved
+    return { moved, moveScore }
 }
