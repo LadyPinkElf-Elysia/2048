@@ -7,6 +7,8 @@ export type Matrix = number[][]
 
 export type Position = [r: number, c: number]
 
+export type MoveDelta = readonly [dr: number, dc: number]
+
 export interface SnapShot {
     matrix: Matrix
     score: number

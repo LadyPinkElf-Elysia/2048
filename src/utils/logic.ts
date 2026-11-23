@@ -1,9 +1,7 @@
-import type { Direction, Matrix } from "@/types/2048"
+import type { Direction, Matrix, MoveDelta } from "@/types/2048"
 
 const inRange = (r: number, c: number, matrix: Matrix) =>
     r >= 0 && r < matrix.length && c >= 0 && c < matrix[0].length
-
-type MoveDelta = readonly [dr: number, dc: number]
 
 const nextMoveDelta = {
     "up": [1, 0] as MoveDelta,
